@@ -23,7 +23,6 @@ export const getAllData = asyncHandler(async (req: Request, res: Response) => {
 export const register = asyncHandler(async (req: Request, res:Response) => {
 
       const body = req.body;
-      console.log("🚀 ~ register ~ body:", body)
 
       if(!body.password) {
           throw new CustomError('password us required', 400)
@@ -32,14 +31,16 @@ export const register = asyncHandler(async (req: Request, res:Response) => {
       
       console.log("🚀 ~ register ~ hashedPassword:", hashedPassword)
 
+
       body.password = hashedPassword
+
       const user= await User.create(body)
       // const user = new User ()
 
       res.status(201).json ({
           status: 'success',
           success: true,
-          message: 'user registered sucessfully',
+          message: 'User registered sucessfully',
           data: user,
       })
 
@@ -48,10 +49,10 @@ export const register = asyncHandler(async (req: Request, res:Response) => {
 //update 
 export const update = asyncHandler(async  (req: Request, res:Response) => {
 
-      const Id = req.params.id;
+      const id = req.params.id;
       const {firstName, LastName, phoneNumber, gender} = req.body
 
-      const user = await User.findByIdAndUpdate(Id, {
+      const user = await User.findByIdAndUpdate(id, {
           firstName,
           LastName,
           phoneNumber,
@@ -75,33 +76,33 @@ export const update = asyncHandler(async  (req: Request, res:Response) => {
 // Login user
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
+
     const { email, password } = req.body;
+
     if (!email) {
-      res.status(400).json({
-        status: "fail",
-        success: false,
-        message: "Email is required",
-      });
+     throw new CustomError('email is required', 400)
     }
+
     if (!password) {
-      res.status(400).json({
-        status: "fail",
-        success: false,
-        message: "Password is required",
-      });
+      throw new CustomError('Password is required', 400);
     }
+
     const user = await User.findOne({ email });
 
     if (!user) {
       throw new CustomError('Wrong credentials provided', 400)
+
       return;
     }
 
+    //compare hash
     const isMatch = compare (password, user?.password as string);
 
     if (!isMatch) {
+
       throw new CustomError('Wrong credentials provided', 400)
-      return 
+
+      return ;
     }
       const payload:IPayload = {
           _id: user._id,
@@ -110,6 +111,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
           lastName: user.lastName,
           role:user.role
       }
+
       const token = generateToken(payload);
 
   res.cookie('access_token', token,{
@@ -121,6 +123,6 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     status: "success",
     success: true,
     message: "Login successful",
-    token
+    token,
   });
 });
