@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Role } from "../@types/global.types"; 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 const userSchema = new mongoose.Schema({
@@ -8,7 +9,7 @@ const userSchema = new mongoose.Schema({
         max: [50, 'first name cannot exceed 50 characters'],
         min: [3, 'first name should be atleast 3 characters']
     },
-    LastName: {
+    lastName: {
         type: String,
         required: [true, 'first Name is required'],
         max: [50, 'last name cannot exceed 50 characters'],
@@ -19,6 +20,11 @@ const userSchema = new mongoose.Schema({
         required: [true, 'email is required'],
         unique: [true, 'User with provided email already exits'],
         match: [emailRegex, "please use a valid email id"]
+    },
+    role:{
+        type: String,
+        enum: Object.values(Role),
+        default: Role.user
     },
     phoneNumber: {
         type: String,
