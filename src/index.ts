@@ -4,6 +4,7 @@ import connectDatabase from "./config/database.config"
 import userRoutes from './routes/user.routes'
 import { CustomError } from './middleware/errorhandler.middleware';
 import productRoutes from './routes/product.routes';
+import path from 'path'
 
 const app = express()
 const DB_URI: string = process.env.DB_URI || ''
@@ -13,6 +14,7 @@ connectDatabase(DB_URI)
 
 //using middleware
 app.use(express.urlencoded({extended: false }));
+app.use('/api/uploads',express.static(path.join(__dirname,'../', 'uploads')))
 
 
 // using routes

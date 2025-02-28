@@ -14,6 +14,5 @@ router.post('/login',login)
 
 //get all users
 router.get('/',getAllData)
-console.log("🚀 ~ getAllData:", getAllData)
 
 export default router; 

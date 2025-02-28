@@ -35,7 +35,6 @@ export const register = asyncHandler(async (req: Request, res:Response) => {
       body.password = hashedPassword
 
       const user= await User.create(body)
-      // const user = new User ()
 
       res.status(201).json ({
           status: 'success',
@@ -92,7 +91,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     if (!user) {
       throw new CustomError('Wrong credentials provided', 400)
 
-      return;
+      return; 
     }
 
     //compare hash
@@ -124,5 +123,6 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     success: true,
     message: "Login successful",
     token,
+
   });
 });

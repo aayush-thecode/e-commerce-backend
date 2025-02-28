@@ -1,35 +1,33 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler.utils";
-import Product from "../models/product.model";
 import { CustomError } from "../middleware/errorhandler.middleware";
-
+import Category from "../models/category.model";
 
 //create
 export const create = asyncHandler(async (req: Request, res: Response) => {
 
     const body = req.body;
-    const product = await Product.create(body)
-    
-    console.log(req.file)
+
+    const category = await Category.create(body)
 
     res.status(201).json({
         status:'success',
         success:true,
-        data: product,
-        message: 'product created successfully!'
+        data: category,
+        message: 'Category created successfully!'
     })
 
 })
 
 // getall product data 
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
-    const products = await Product.find({}).populate('createdBy')
+    const categories = await Category.find({}).populate('createdBy')
 
     res.status(200).json ({
         success:true,
         status:'success',
-        data: products,
-        message: 'Product fetched successfully!'
+        data: categories,
+        message: 'category fetched successfully!'
     })
 })
 
@@ -39,22 +37,22 @@ export const UpdateProduct = asyncHandler(async (req: Request, res: Response) =>
     const productId = req.params.id; 
     const {name, price, createdBy, description} = req.body; 
 
-    const product = await Product.findByIdAndUpdate(productId, {
+    const category = await Category.findByIdAndUpdate(productId, {
         name,
         price,
         createdBy,
         description
     }, {new:true})
 
-if(!Product) {
-    throw new CustomError('product is required', 400)
+if(!Category) {
+    throw new CustomError('category is required', 400)
 }
 
     res.status(201).json ({
     status: 'success',
     success: true,
-    message: 'Product Updated successfully',
-    data: product
+    message: 'category Updated successfully',
+    data: category
 
     })
 
@@ -63,13 +61,13 @@ if(!Product) {
 
 //delete productby Id 
 
-export const deleteProductById = asyncHandler (async(req: Request, res: Response) => {
+export const deleteCategoryById = asyncHandler (async(req: Request, res: Response) => {
 
-    const productId = req.params.id;
+    const CategoryId = req.params.id;
 
-    const deleteProductById = await Product.findByIdAndDelete(productId);
+    const deleteCategoryById = await Category.findByIdAndDelete(CategoryId);
 
-    if (!Product) {
+    if (!Category) {
         throw new CustomError('product not found', 404)
     }
 
@@ -77,6 +75,6 @@ export const deleteProductById = asyncHandler (async(req: Request, res: Response
         status: 'success',
         success: true,
         message: 'Product deleted successfully!',
-        data: deleteProductById,
+        data: deleteCategoryById,
     })
 })

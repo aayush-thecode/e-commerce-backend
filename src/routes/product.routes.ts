@@ -1,10 +1,37 @@
 import express from 'express'
-import { create, getAll } from '../controllers/product.controller';
+import { create, deleteProductById, getAll, UpdateProduct } from '../controllers/product.controller';
+import multer from "multer";
+
+
 
 const router = express.Router()
 
-//register user
-router.post('/', create);
+//storage 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './uploads')
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null,uniqueSuffix + file.originalname)
+    }
+  })
 
-router.get('/', getAll)
+  const upload = multer({storage: storage})
+
+//register user
+router.post('/', upload.single('coverImage'), create);
+
+
+//get all products
+router.get('/', getAll);
+
+
+//update products by id 
+router.put('/:id', UpdateProduct)
+
+
+//delete product by id 
+router.delete('/:id', deleteProductById)
+
 export default router; 
