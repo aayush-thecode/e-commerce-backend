@@ -21,11 +21,9 @@ const PORT = process.env.PORT || 8000;
 connectDatabase(DB_URI)
 
 
-
 //using middleware
 app.use(express.urlencoded({extended: false }));
 app.use('/api/uploads',express.static(path.join(__dirname,'../', 'uploads')))
-
 
 
 // using routes
