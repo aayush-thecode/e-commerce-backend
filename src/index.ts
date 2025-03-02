@@ -1,25 +1,39 @@
 import 'dotenv/config'
 import express, { NextFunction, Request, Response } from 'express';
 import connectDatabase from "./config/database.config"
-import userRoutes from './routes/user.routes'
 import { CustomError } from './middleware/errorhandler.middleware';
-import productRoutes from './routes/product.routes';
 import path from 'path'
+
+//using routes
+import Category from './routes/category.routes'
+import Review from './routes/review.routes';
+import userRoutes from './routes/user.routes'
+import productRoutes from './routes/product.routes';
+
+
 
 const app = express()
 const DB_URI: string = process.env.DB_URI || ''
 const PORT = process.env.PORT || 8000;
 
+
+
 connectDatabase(DB_URI)
+
+
 
 //using middleware
 app.use(express.urlencoded({extended: false }));
 app.use('/api/uploads',express.static(path.join(__dirname,'../', 'uploads')))
 
 
+
 // using routes
 app.use('/api/user/', userRoutes)
 app.use('/api/product', productRoutes)
+app.use('/api/category', Category)
+app.use('/api/review', Review)
+
 
 
 // handle not found path 

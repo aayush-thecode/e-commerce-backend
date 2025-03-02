@@ -10,7 +10,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     const body = req.body;
     const product = await Product.create(body)
     
-    console.log(req.file)
+    console.log(req.files)
     const {coverImage, images} = req.files as {[feildname: string]: Express.Multer.File[]}
 
 

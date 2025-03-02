@@ -16,6 +16,11 @@ const productSchema = new mongoose.Schema ({
         ref: 'user',
         required: [true, ' author is required ']
     },
+    category: {
+        type: mongoose.Types.ObjectId,
+        ref: 'category',
+        required: [true, 'Category is required']
+    },
     description: {
         type: String,
         required: false,
@@ -26,10 +31,17 @@ const productSchema = new mongoose.Schema ({
         type: String,
         required: false,
     },
-    images: [{
+    images: [
+        {
         type: String,
         required: false
-    }]
+    }],
+    reviews: [
+        {
+
+        }
+    ]
+
     
 },{timestamps: true})
 
