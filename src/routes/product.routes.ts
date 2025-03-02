@@ -13,11 +13,24 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null,uniqueSuffix + file.originalname)
+      cb(null,file.fieldname + '-' + uniqueSuffix)
     }
   })
 
   const upload = multer({storage: storage})
+
+//create product 
+
+router.post('/', upload.fields ([
+  {
+    name: 'coverImage',
+    maxCount:1
+  },
+  {
+    name: 'images',
+    maxCount:6
+  }
+]), create) 
 
 //register user
 router.post('/', upload.single('coverImage'), create);

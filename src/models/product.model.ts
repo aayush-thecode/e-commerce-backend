@@ -25,7 +25,11 @@ const productSchema = new mongoose.Schema ({
     coverImage: {
         type: String,
         required: false,
-    }
+    },
+    images: [{
+        type: String,
+        required: false
+    }]
     
 },{timestamps: true})
 

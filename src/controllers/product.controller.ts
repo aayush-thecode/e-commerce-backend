@@ -11,15 +11,31 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     const product = await Product.create(body)
     
     console.log(req.file)
+    const {coverImage, images} = req.files as {[feildname: string]: Express.Multer.File[]}
+
+
+if(!coverImage) {
+    throw new CustomError('cover Image is required',400);
+}
+
+product.coverImage = coverImage[0]?.path
+
+if(images && images.length > 0) {
+    const imagePath: string[] = images.map((image: any, index: number) => image.path)
+    product.images = imagePath
+}
+
+    await product.save()
 
     res.status(201).json({
-        status:'success',
         success:true,
+        status:'success',
         data: product,
-        message: 'product created successfully!'
+        message: 'Product fetched successfully!'
     })
-
 })
+
+
 
 // getall product data 
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
