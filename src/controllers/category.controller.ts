@@ -21,7 +21,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 // getall product data 
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
-    const categories = await Category.find({}).populate('createdBy')
+    const categories = await Category.find({})
 
     res.status(200).json ({
         success:true,

@@ -49,6 +49,28 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
     })
 })
 
+// get product by id
+
+export const getProductById = asyncHandler(async (req: Request, res: Response) => {
+    
+    const productId = req.params.id;
+
+    const product = await Product.findById(productId)
+
+    if(!productId) {
+        throw new CustomError('product not found', 404); 
+    }
+
+    res.status(201).json ({
+        status: 'successfull',
+        data: product,
+        success: true,
+        message: 'product fetched successfully!'
+    })
+
+
+})
+
 //update product 
 export const UpdateProduct = asyncHandler(async (req: Request, res: Response) => {
 

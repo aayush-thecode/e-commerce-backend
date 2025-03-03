@@ -1,5 +1,5 @@
 import express from 'express'
-import { create, deleteProductById, getAll, UpdateProduct } from '../controllers/product.controller';
+import { create, deleteProductById, getAll, getProductById, UpdateProduct } from '../controllers/product.controller';
 import multer from "multer";
 
 
@@ -46,5 +46,8 @@ router.put('/:id', UpdateProduct)
 
 //delete product by id 
 router.delete('/:id', deleteProductById)
+
+//get product by id
+router.get('/:id', getProductById)
 
 export default router; 

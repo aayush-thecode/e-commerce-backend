@@ -7,6 +7,7 @@ import { asyncHandler } from "../utils/asyncHandler.utils";
 import { CustomError } from "../middleware/errorhandler.middleware";
 
 
+//get user
 export const getAllData = asyncHandler(async (req: Request, res: Response) => {
 
       const users = await User.find();

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler.utils";
 import { CustomError } from "../middleware/errorhandler.middleware";
 import Review from "../models/review.model";
+import Product from "../models/product.model";
 
 
 
@@ -10,12 +11,35 @@ export const createReview = asyncHandler(async (req: Request, res: Response) => 
 
     const body = req.body;
 
-    const review = await Review.create(body)
+    const{userId, productId, rating} = body
+
+
+
+    if(!userId || !productId) {
+        throw new CustomError('user Id and productId is required',400);
+    }
+
+
+    const product = await Product.findById(productId)
+
+    if(!product) {
+        throw new CustomError('product not found', 404)
+    }
+
+    const newReview = await Review.create({...body, product: productId, user:userId})
+    
+    product.reviews.push(newReview._id)
+    
+    const totalRating:number = ( product?.averageRating as number * (product.reviews.length - 1)) + Number(rating);
+
+    product.averageRating = totalRating / product.reviews.length 
+
+    await product.save()
 
     res.status(201).json({
         status:'success',
         success:true,
-        data: review,
+        data: newReview,
         message: 'review created successfully!'
     })
 
