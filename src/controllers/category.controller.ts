@@ -3,7 +3,8 @@ import { asyncHandler } from "../utils/asyncHandler.utils";
 import { CustomError } from "../middleware/errorhandler.middleware";
 import Category from "../models/category.model";
 
-//create
+//create new category 
+
 export const create = asyncHandler(async (req: Request, res: Response) => {
 
     const body = req.body;
@@ -19,8 +20,9 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 })
 
-// getall product data 
-export const getAll = asyncHandler(async (req: Request, res: Response) => {
+// getall category data 
+
+export const getAllCategory = asyncHandler(async (req: Request, res: Response) => {
     const categories = await Category.find({})
 
     res.status(200).json ({
@@ -30,6 +32,30 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
         message: 'category fetched successfully!'
     })
 })
+
+//get category by id 
+
+export const getCategoryById = asyncHandler(async (req: Request, res: Response) => {
+
+    const categoryId = req.params.id
+
+    const category = await Category.findById(categoryId)
+
+    if(!categoryId) {
+
+        throw new CustomError('category not found!', 400)
+    
+    }
+
+    res.status(201).json ({
+        status: 'success',
+        success: true,
+        message: 'category fetched successfully',
+        data: category
+    
+        })
+});
+
 
 //update product 
 export const UpdateProduct = asyncHandler(async (req: Request, res: Response) => {
@@ -59,7 +85,7 @@ if(!Category) {
 })
 
 
-//delete productby Id 
+//delete categoryby Id 
 
 export const deleteCategoryById = asyncHandler (async(req: Request, res: Response) => {
 

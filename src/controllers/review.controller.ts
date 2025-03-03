@@ -6,7 +6,8 @@ import Product from "../models/product.model";
 
 
 
-//create review 
+//create new review 
+
 export const createReview = asyncHandler(async (req: Request, res: Response) => {
 
     const body = req.body;
@@ -45,8 +46,10 @@ export const createReview = asyncHandler(async (req: Request, res: Response) => 
 
 })
 
-// getall product data 
+// getall review data
+
 export const getAllReview = asyncHandler(async (req: Request, res: Response) => {
+    
     const reviews = await Review.find({})
 
     res.status(200).json ({
@@ -57,6 +60,7 @@ export const getAllReview = asyncHandler(async (req: Request, res: Response) => 
     })
 })
 
+// update review by id 
 
 export const UpdateReview = asyncHandler(async (req: Request, res: Response) => {
 

@@ -7,7 +7,8 @@ import { asyncHandler } from "../utils/asyncHandler.utils";
 import { CustomError } from "../middleware/errorhandler.middleware";
 
 
-//get user
+//get  all user data 
+
 export const getAllData = asyncHandler(async (req: Request, res: Response) => {
 
       const users = await User.find();
@@ -20,7 +21,32 @@ export const getAllData = asyncHandler(async (req: Request, res: Response) => {
     })
 
 
-    //register user ....
+// get user by id 
+
+export const getDataById = asyncHandler(async (req: Request, res: Response) => {
+
+  const usersId = req.params.id;
+
+  const user = await User.findById(usersId)
+
+  if(!usersId) {
+
+    throw new CustomError('user not found by the given id', 400);
+    
+  }
+
+      res.status(201).json ({
+      status:'success',
+      success: true,
+      message:'User found successfully!',
+      data: user
+
+    })
+})
+
+
+//register user ....
+
 export const register = asyncHandler(async (req: Request, res:Response) => {
 
       const body = req.body;
@@ -46,21 +72,26 @@ export const register = asyncHandler(async (req: Request, res:Response) => {
 
   })
 
-//update 
+//update user by id 
+
 export const update = asyncHandler(async  (req: Request, res:Response) => {
 
       const id = req.params.id;
-      const {firstName, LastName, phoneNumber, gender} = req.body
+      const {firstName, LastName, phoneNumber, gender} = req.body;
 
       const user = await User.findByIdAndUpdate(id, {
+
           firstName,
           LastName,
           phoneNumber,
           gender
+
 }, {new:true}) 
 
       if(!user) {
+
          throw new CustomError('user is required', 400)
+
       }
 
       res.status(201).json ({
@@ -95,7 +126,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       return; 
     }
 
-    //compare hash
+  //-----------compare hash------------------
     const isMatch = compare (password, user?.password as string);
 
     if (!isMatch) {
