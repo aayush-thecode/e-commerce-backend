@@ -9,7 +9,7 @@ import { CustomError } from "../middleware/errorhandler.middleware";
 
 //get  all user data 
 
-export const getAllData = asyncHandler(async (req: Request, res: Response) => {
+export const getAllUserData = asyncHandler(async (req: Request, res: Response) => {
 
       const users = await User.find();
       res.status(200).json({
@@ -23,7 +23,7 @@ export const getAllData = asyncHandler(async (req: Request, res: Response) => {
 
 // get user by id 
 
-export const getDataById = asyncHandler(async (req: Request, res: Response) => {
+export const getUserDataById = asyncHandler(async (req: Request, res: Response) => {
 
   const usersId = req.params.id;
 
@@ -32,7 +32,7 @@ export const getDataById = asyncHandler(async (req: Request, res: Response) => {
   if(!usersId) {
 
     throw new CustomError('user not found by the given id', 400);
-    
+
   }
 
       res.status(201).json ({
@@ -71,6 +71,7 @@ export const register = asyncHandler(async (req: Request, res:Response) => {
       })
 
   })
+
 
 //update user by id 
 
@@ -127,6 +128,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     }
 
   //-----------compare hash------------------
+
     const isMatch = compare (password, user?.password as string);
 
     if (!isMatch) {
@@ -136,25 +138,53 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
       return ;
     }
       const payload:IPayload = {
+
           _id: user._id,
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
           role:user.role
+
       }
 
       const token = generateToken(payload);
 
-  res.cookie('access_token', token,{
+    res.cookie('access_token', token,{
       
       httpOnly:true,
       secure: process.env.NODE_ENV === 'production'
 
-  }).status(200).json({
+    }).status(200).json({
     status: "success",
     success: true,
     message: "Login successful",
     token,
 
-  });
+    });
+
 });
+
+//delete user by id 
+
+export const deleteUserById = asyncHandler( async(req: Request, res:Response) => {
+
+const deleteId = req.params.id
+
+const deleteUserId = await User.findByIdAndDelete(deleteId)
+
+if(!deleteId) {
+  
+  throw new CustomError('Id mismatched and cannot delete', 400);
+
+}
+
+res.status(201).json({
+  
+  status:'success',
+  success:true,
+  message: 'user deleted sucessfully',
+  data: deleteUserId,
+  
+  })
+
+}) 

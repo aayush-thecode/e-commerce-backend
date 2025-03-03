@@ -17,6 +17,6 @@ router.delete('/:id',deleteCategoryById );
 router.get('/', getAllCategory);
 
 //get category by id 
-router.get('/', getCategoryById);
+router.get('/:id', getCategoryById);
 
 export default router; 

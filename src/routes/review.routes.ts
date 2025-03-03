@@ -1,11 +1,14 @@
 import express from 'express';
-import {createReview, deleteReviewById, getAllReview, UpdateReview } from '../controllers/review.controller';
+import {createReview, deleteReviewById, getAllReview, getReviewId, UpdateReview } from '../controllers/review.controller';
 
 
 const router = express.Router()
 
 //get all user review
 router.get('/', getAllReview);
+
+// get user review by Id
+router.get('/:id', getReviewId)
 
 //create reviews
 router.post('/', createReview)

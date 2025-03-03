@@ -60,6 +60,29 @@ export const getAllReview = asyncHandler(async (req: Request, res: Response) => 
     })
 })
 
+//get review data by Id
+
+export const getReviewId = asyncHandler(async (req: Request, res: Response) => {
+
+    const getReviewById = req.params.id;
+
+    const getReview = await Review.findById(getReviewById)
+
+    if(!getReviewById) {
+        
+        throw new CustomError('review data not found', 400); 
+
+    }
+
+    res.status(200).json ({
+        status: 'success',
+        success: true,
+        message: 'review data fetched successfully!',
+        data: getReview
+    })
+
+})
+
 // update review by id 
 
 export const UpdateReview = asyncHandler(async (req: Request, res: Response) => {
