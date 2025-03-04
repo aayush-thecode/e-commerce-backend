@@ -58,6 +58,7 @@ export const getCategoryById = asyncHandler(async (req: Request, res: Response) 
 
 
 //update product 
+
 export const UpdateProduct = asyncHandler(async (req: Request, res: Response) => {
 
     const productId = req.params.id; 

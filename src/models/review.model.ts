@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const reviewSchema = new mongoose.Schema ({
     rating: {
         type: Number,
-        tequired: [true, 'rating is required'],
+        required: [true, 'rating is required'],
         min: 1,
         max: 5
     },

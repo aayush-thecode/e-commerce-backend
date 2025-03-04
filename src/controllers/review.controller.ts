@@ -110,7 +110,7 @@ if(!ReviewId) {
 })
 
 
-//delete productby Id 
+//delete reviews by product Id 
 
 export const deleteReviewById = asyncHandler (async(req: Request, res: Response) => {
 
@@ -119,7 +119,9 @@ export const deleteReviewById = asyncHandler (async(req: Request, res: Response)
     const deleteReviewById = await Review.findByIdAndDelete(ReviewId);
 
     if (!deleteReviewById) {
-        throw new CustomError('Review not found', 404)
+
+        throw new CustomError('Review not found', 404);
+
     }
 
     res.status(200).json ({

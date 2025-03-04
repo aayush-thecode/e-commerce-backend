@@ -124,7 +124,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     if (!user) {
       throw new CustomError('Wrong credentials provided', 400)
 
-      return; 
+      
     }
 
   //-----------compare hash------------------
