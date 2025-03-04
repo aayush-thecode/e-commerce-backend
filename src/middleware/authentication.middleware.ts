@@ -3,12 +3,13 @@ import { CustomError } from "./errorhandler.middleware"
 import { Role } from "../@types/global.types";
 import { verifyToken } from "../utils/jwt.utils";
 import { JwtPayload } from "jsonwebtoken";
+import User from "../models/users.model";
 
 
 
 export const Authenticate = (roles?:Role[]) => {
 
-    return (req:Request, res:Response, next: NextFunction) => {
+    return async (req:Request, res:Response, next: NextFunction) => {
 
         try{
 
@@ -43,10 +44,26 @@ export const Authenticate = (roles?:Role[]) => {
 
         if(roles && !roles.includes(decoded.role)) {
 
-            throw new CustomError('Forbidden, unauthorized to access this resource', 401)
+            throw new CustomError('Forbidden, unauthorized to access this resource', 403)
 
         }
 
+
+        const user = await User.findById(decoded._id)
+
+        if(!user) {
+
+            throw new CustomError('User not found', 400); 
+
+        }
+
+        (req as any).user = {
+            _id:decoded._id,
+            firstName: decoded.firstName,
+            lastName: decoded.lastName,
+            role: decoded.role,
+            email: decoded.email
+        }
 
         next()
 

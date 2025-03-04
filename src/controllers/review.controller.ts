@@ -60,73 +60,144 @@ export const getAllReview = asyncHandler(async (req: Request, res: Response) => 
     })
 })
 
-//get review data by Id
+//get review data by product Id
 
 export const getReviewId = asyncHandler(async (req: Request, res: Response) => {
 
-    const getReviewById = req.params.id;
+    const {productId }= req.params
 
-    const getReview = await Review.findById(getReviewById)
-
-    if(!getReviewById) {
+    if(!productId) {
         
         throw new CustomError('review data not found', 400); 
 
     }
 
-    res.status(200).json ({
-        status: 'success',
-        success: true,
-        message: 'review data fetched successfully!',
-        data: getReview
-    })
+    const product = await Review.findById(productId)
 
-})
+    if (!product) {
+
+        throw new CustomError("Product not found", 404);
+    }
+
+    // Find reviews for the given productId
+
+    const reviews = await Review.find({ product: productId }).populate("user", "firstName lastName email")
+
+    res.status(200).json({
+        status: "success",
+        success: true,
+        count: reviews.length,
+        data: reviews,
+    });
+});
 
 // update review by id 
 
-export const UpdateReview = asyncHandler(async (req: Request, res: Response) => {
+export const updateReview = asyncHandler(async (req: Request, res: Response) => {
 
-    const ReviewId = req.params.id; 
-    const {rating, review} = req.body; 
+    const { productId, reviewId, rating, comment } = req.body
 
-    const reviews = await Review.findByIdAndUpdate(ReviewId, {
-        rating, 
-        review,
-    }, {new:true})
+    if (!productId || !reviewId) {
 
-if(!ReviewId) {
-    throw new CustomError('review is required', 400)
-}
+        throw new CustomError("Product ID and Review ID are required", 400)
 
-    res.status(201).json ({
-    status: 'success',
-    success: true,
-    message: 'Review Updated successfully',
-    data: reviews,
+    }
 
-    })
+    const product = await Product.findById(productId);
 
-})
+    if (!product) {
+
+        throw new CustomError("Product not found", 404)
+
+    }
+
+    const review = await Review.findById(reviewId)
+
+    if (!review) {
+
+        throw new CustomError("Review not found", 404)
+
+    }
+
+    // Store the old rating before updating
+
+    const oldRating = review.rating;
+
+    // Update review fields
+
+    if (rating !== undefined) review.rating = rating
+
+    if (comment !== undefined) review.review = comment
+    await review.save();
+
+    // Update the average rating
+
+    const totalRating = (product?.averageRating as number * product.reviews.length - oldRating + rating) / product.reviews.length
+
+    product.averageRating = totalRating
+
+    await product.save();
+
+    res.status(200).json({
+        status: "success",
+        success: true,
+        data: review,
+        message: "Review updated successfully!",
+    });
+});
+
 
 
 //delete reviews by product Id 
 
-export const deleteReviewById = asyncHandler (async(req: Request, res: Response) => {
+export const deleteReview = asyncHandler(async (req: Request, res: Response) => {
 
-    const ReviewId = req.params.id;
+    const { userId, productId } = req.body;
 
-    const deleteReviewById = await Review.findByIdAndDelete(ReviewId);
+    if (!userId || !productId) {
 
-    if (!deleteReviewById) {
+        throw new CustomError("User ID and Product ID are required", 400);
+    }
 
-        throw new CustomError('Review not found', 404);
+    const product = await Product.findById(productId);
+
+    if (!product) {
+
+        throw new CustomError("Product not found", 404);
 
     }
 
-    res.status(200).json ({
-        status: 'success',
+    const review = await Review.findOne({ product: productId, user: userId });
+
+    if (!review) {
+
+        throw new CustomError("Review not found or you are not authorized to delete it", 404);
+        
+    }
+
+    await Review.findByIdAndDelete(review._id);
+
+    product.reviews.pull(product.reviews.filter((id) => id.toString() !== review._id.toString())) 
+
+    // Recalculate average rating
+
+    if (product.reviews.length === 0) {
+
+        product.averageRating = 0;
+
+    } else {
+
+        const totalRating = (product.averageRating as number * (product.reviews.length + 1)) - review.rating;
+
+        product.averageRating = totalRating / product.reviews.length;
+
+    }
+
+    await product.save();
+
+    res.status(200).json({
+        status: "success",
         success: true,
-        message: 'Review deleted successfully!',
-    })
-})
+        message: "Review deleted successfully!",
+    });
+});

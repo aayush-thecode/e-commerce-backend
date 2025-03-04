@@ -1,8 +1,11 @@
+//importing 
+
 import 'dotenv/config'
 import express, { NextFunction, Request, Response } from 'express';
 import connectDatabase from "./config/database.config"
 import { CustomError } from './middleware/errorhandler.middleware';
 import path from 'path'
+
 
 //using routes
 import Category from './routes/category.routes'

@@ -1,5 +1,5 @@
 import express from 'express';
-import {createReview, deleteReviewById, getAllReview, getReviewId, UpdateReview } from '../controllers/review.controller';
+import {createReview, deleteReview, getAllReview, getReviewId, updateReview } from '../controllers/review.controller';
 import { Authenticate } from '../middleware/authentication.middleware';
 
 const router = express.Router()
@@ -14,9 +14,9 @@ router.get('/:id', getReviewId)
 router.post('/', Authenticate(), createReview)
 
 // update review by id
-router.put('/:id', UpdateReview)
+router.put('/:id', updateReview)
 
 // delete review by id
-router.delete('/:id', deleteReviewById)
+router.delete('/:id', deleteReview)
 
 export default router; 

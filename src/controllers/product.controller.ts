@@ -38,7 +38,9 @@ if(images && images.length > 0) {
 
 
 // getall product data 
+
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
+
     const products = await Product.find({}).populate('createdBy')
 
     res.status(200).json ({
@@ -48,6 +50,7 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
         message: 'Product fetched successfully!'
     })
 })
+
 
 // get product by id
 
