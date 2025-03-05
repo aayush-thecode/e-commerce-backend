@@ -1,6 +1,9 @@
 import express from 'express'
-import { create, deleteProductById, getAll, getProductById, UpdateProduct } from '../controllers/product.controller';
+import { create, getAll, getProductById, update } from '../controllers/product.controller';
 import multer from "multer";
+import { Authenticate } from '../middleware/authentication.middleware';
+import { OnlyAdmin } from '../@types/global.types';
+import { deleteCategoryById } from '../controllers/category.controller';
 
 
 
@@ -21,7 +24,7 @@ const storage = multer.diskStorage({
 
 //create product 
 
-router.post('/', upload.fields ([
+router.post('/', Authenticate(OnlyAdmin), upload.fields ([
   {
     name: 'coverImage',
     maxCount:1
@@ -41,11 +44,11 @@ router.get('/', getAll);
 
 
 //update products by id 
-router.put('/:id', UpdateProduct)
+router.put('/:id', update);
 
 
 //delete product by id 
-router.delete('/:id', deleteProductById)
+router.delete('/:id', deleteCategoryById)
 
 //get product by id
 router.get('/:id', getProductById)

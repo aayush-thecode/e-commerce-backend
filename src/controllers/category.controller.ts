@@ -39,6 +39,12 @@ export const getCategoryById = asyncHandler(async (req: Request, res: Response) 
 
     const categoryId = req.params.id
 
+    if(!categoryId) {
+
+        throw new CustomError('Id is required ', 404)
+
+    }
+
     const category = await Category.findById(categoryId)
 
     if(!categoryId) {
@@ -57,22 +63,25 @@ export const getCategoryById = asyncHandler(async (req: Request, res: Response) 
 });
 
 
-//update product 
+//update category by product id
 
 export const UpdateProduct = asyncHandler(async (req: Request, res: Response) => {
 
     const productId = req.params.id; 
-    const {name, price, createdBy, description} = req.body; 
+
+    if(!productId) {
+        throw new CustomError('category is required', 400)
+    }
+
+    const {name, description} = req.body; 
 
     const category = await Category.findByIdAndUpdate(productId, {
         name,
-        price,
-        createdBy,
         description
     }, {new:true})
 
 if(!Category) {
-    throw new CustomError('category is required', 400)
+    throw new CustomError('category not found', 400)
 }
 
     res.status(201).json ({
@@ -92,10 +101,18 @@ export const deleteCategoryById = asyncHandler (async(req: Request, res: Respons
 
     const CategoryId = req.params.id;
 
+    if(!CategoryId) {
+
+        throw new CustomError(' Id is required', 404)
+
+    }
+
     const deleteCategoryById = await Category.findByIdAndDelete(CategoryId);
 
-    if (!Category) {
+    if (!deleteCategoryById) {
+
         throw new CustomError('product not found', 404)
+
     }
 
     res.status(200).json ({

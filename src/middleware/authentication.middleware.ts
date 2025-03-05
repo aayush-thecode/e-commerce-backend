@@ -13,20 +13,20 @@ export const Authenticate = (roles?:Role[]) => {
 
         try{
 
-        const token = req.headers['authorization'] as string
+        const authHeader = req.headers['authorization'] as string
 
-        if(!token || !token.startsWith('BEARER') ){
+        if(!authHeader || !authHeader.startsWith('BEARER') ){
 
-            throw new CustomError('Unauthorized', 401)
+            throw new CustomError('Unauthorized token is missing', 401)
 
         }
 
-        const access_token = token.split(' ')[1] 
+        const access_token = authHeader.split(' ')[1] 
 
 
         if(!access_token) {
 
-            throw new CustomError('Unauthorized, access denied!', 401)
+            throw new CustomError('Unauthorized, token is missing! ,access denied!', 401)
 
         }
 
@@ -42,11 +42,6 @@ export const Authenticate = (roles?:Role[]) => {
 
         }
 
-        if(roles && !roles.includes(decoded.role)) {
-
-            throw new CustomError('Forbidden, unauthorized to access this resource', 403)
-
-        }
 
 
         const user = await User.findById(decoded._id)
@@ -57,7 +52,13 @@ export const Authenticate = (roles?:Role[]) => {
 
         }
 
-        (req as any).user = {
+        if(roles && !roles.includes(user.role)) {
+
+            throw new CustomError(`Forbidden, ${user.role} can not acess this resource`, 403)
+
+        }
+
+        req.user = {
             _id:decoded._id,
             firstName: decoded.firstName,
             lastName: decoded.lastName,

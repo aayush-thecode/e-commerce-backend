@@ -1,17 +1,18 @@
 import express from 'express';
 import {createReview, deleteReview, getAllReview, getReviewId, updateReview } from '../controllers/review.controller';
 import { Authenticate } from '../middleware/authentication.middleware';
+import { OnlyAdmin, onlyUser } from '../@types/global.types';
 
 const router = express.Router()
 
 //get all user review
-router.get('/', getAllReview);
+router.get('/', Authenticate(OnlyAdmin), getAllReview);
 
 // get user review by Id
 router.get('/:id', getReviewId)
 
 //create reviews
-router.post('/', Authenticate(), createReview)
+router.post('/', Authenticate(onlyUser), createReview)
 
 // update review by id
 router.put('/:id', updateReview)

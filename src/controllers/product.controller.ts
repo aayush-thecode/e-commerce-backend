@@ -2,9 +2,12 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler.utils";
 import Product from "../models/product.model";
 import { CustomError } from "../middleware/errorhandler.middleware";
+import { deleteFiles } from "../utils/deleteFIles.utils";
+import Category from "../models/category.model";
 
 
-//create
+//create product 
+
 export const create = asyncHandler(async (req: Request, res: Response) => {
 
     const body = req.body;
@@ -74,50 +77,112 @@ export const getProductById = asyncHandler(async (req: Request, res: Response) =
 
 })
 
+
 //update product 
-export const UpdateProduct = asyncHandler(async (req: Request, res: Response) => {
 
-    const productId = req.params.id; 
-    const {name, price, createdBy, description} = req.body; 
+export const update = asyncHandler(async (req: Request, res: Response) => {
 
-    const product = await Product.findByIdAndUpdate(productId, {
-        name,
-        price,
-        createdBy,
-        description
-    }, {new:true})
+    const {deletedImages, name, price, description, categoryId } = req.body;
 
-if(!Product) {
-    throw new CustomError('product is required', 400)
+    const id = req.params.id; 
+    
+    const {coverImage, images} = req.files as {
+        [feildname: string]: Express.Multer.File[]
+    }
+
+
+    const product = await Product.findByIdAndUpdate( id, 
+        {name, price, description},
+        {new: true}
+    );
+
+    if(!product) {
+
+        throw new CustomError('', 404)
+    }
+
+    if(categoryId) {
+
+        const category = await Category.findById(categoryId)
+        if(!category) {
+
+            throw new CustomError('category not found',404)
+        }
+        product.category = categoryId;
+
+    }
+
+
+    if(coverImage) {
+
+        await deleteFiles([product.coverImage as string])
+        product.coverImage = coverImage[0]?.path
+
+    }
+
+
+    if(deletedImages && deletedImages.length > 0) { 
+
+    await deleteFiles(deletedImages as string[])
+    product.images = product.images.filter(
+        (image) => !deletedImages.includes(image))
+
+
+    }
+
+
+    if(images && images.length > 0) {
+
+    const imagePath: string[] = images.map(
+        (image: any, index: number) => image.path);
+    product.images = [...product.images,...imagePath];
+
 }
 
-    res.status(201).json ({
-    status: 'success',
-    success: true,
-    message: 'Product Updated successfully',
-    data: product
+    await product.save()
 
+    res.status(201).json({
+        success:true,
+        status:'success',
+        data: product,
+        message: 'updated successfully!'
     })
-
 })
+
 
 
 //delete productby Id 
 
-export const deleteProductById = asyncHandler (async(req: Request, res: Response) => {
+export const remove = asyncHandler(async (req: Request, res: Response) => {
+    const id = req.params.id;
 
-    const productId = req.params.id;
+    const product = await Product.findByIdAndDelete(id);
 
-    const deleteProductById = await Product.findByIdAndDelete(productId);
-
-    if (!Product) {
-        throw new CustomError('product not found', 404)
+    if (!product) {
+        throw new CustomError('Product not found', 404);
     }
 
-    res.status(200).json ({
-        status: 'success',
+    // Delete associated images if they exist
+    const imagesToDelete: string[] = [];
+    
+    if (product.coverImage) {
+        imagesToDelete.push(product.coverImage as string);
+    }
+
+    if (product.images && product.images.length > 0) {
+        imagesToDelete.push(...product.images as string[]);
+    }
+
+    // Delete files if there are any
+    
+    if (imagesToDelete.length > 0) {
+        await deleteFiles(imagesToDelete);
+    }
+
+    res.status(200).json({
         success: true,
-        message: 'Product deleted successfully!',
-        data: deleteProductById,
-    })
-})
+        status: 'success',
+        message: 'Product deleted successfully!'
+
+    });
+});

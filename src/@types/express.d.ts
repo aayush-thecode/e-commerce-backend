@@ -4,9 +4,9 @@ declare global {
 
     namespace Express {
 
-        export interface Request{
+        interface Request{
 
-            user?:IPayload
+            user:IPayload
 
         }
 
