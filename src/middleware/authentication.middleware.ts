@@ -7,13 +7,19 @@ import User from "../models/users.model";
 
 
 
-export const Authenticate = (roles?:Role[]) => {
+export const Authenticate = (
+
+    roles?:Role[]):
+
+((req:Request, res:Response, next: NextFunction) => Promise<void>) => {
 
     return async (req:Request, res:Response, next: NextFunction) => {
 
         try{
 
-        const authHeader = req.headers['authorization'] as string
+        const authHeader = req.headers['authorization'] as string;
+
+        console.log("🚀 ~ return ~ authHeader:", authHeader)
 
         if(!authHeader || !authHeader.startsWith('BEARER') ){
 
@@ -21,7 +27,7 @@ export const Authenticate = (roles?:Role[]) => {
 
         }
 
-        const access_token = authHeader.split(' ')[1] 
+        const access_token = authHeader.split(' ')[1];
 
 
         if(!access_token) {
@@ -30,14 +36,19 @@ export const Authenticate = (roles?:Role[]) => {
 
         }
 
-        const decoded: JwtPayload = verifyToken(access_token)
+        const decoded = verifyToken(access_token)
 
-        if(decoded.exp && decoded.exp * 1000 > Date.now())
+        if(decoded.exp && decoded.exp * 1000 > Date.now()) {
+
+            throw new CustomError('Unauthorized, access denied', 401);
+
+        }
+
+        console.log("🚀 ~ return ~ decoded:", decoded);
+
 
         if(!decoded) {
-
-        console.log("🚀 ~ return ~ decoded:", decoded)
-
+        
             throw new CustomError('Unauthorized, Invalid token', 401)
 
         }
@@ -48,15 +59,18 @@ export const Authenticate = (roles?:Role[]) => {
 
         if(!user) {
 
-            throw new CustomError('User not found', 400); 
+            throw new CustomError('User not found', 404); 
 
         }
 
         if(roles && !roles.includes(user.role)) {
 
-            throw new CustomError(`Forbidden, ${user.role} can not acess this resource`, 403)
-
+            throw new CustomError(
+                `Forbidden, ${user.role} can not acess this resource`, 401
+            );
         }
+
+        //ts-expect-error
 
         req.user = {
             _id:decoded._id,
@@ -70,7 +84,7 @@ export const Authenticate = (roles?:Role[]) => {
 
         } catch(err:any) {
 
-            throw new CustomError(err?.message ?? 'something went wrong',400);
+            throw new CustomError(err?.message ?? 'something went wrong',500);
 
         }
 
