@@ -1,5 +1,5 @@
 import express from 'express';
-import {createReview, deleteReview, getAllReview, getReviewId, updateReview } from '../controllers/review.controller';
+import {createReview, deleteReview, getAllReview, getReviewId, update,} from '../controllers/review.controller';
 import { Authenticate } from '../middleware/authentication.middleware';
 import { OnlyAdmin, onlyUser } from '../@types/global.types';
 
@@ -15,7 +15,7 @@ router.get('/:id', getReviewId)
 router.post('/', Authenticate(onlyUser), createReview)
 
 // update review by id
-router.put('/:id', updateReview)
+router.put('/:id',Authenticate(onlyUser), update)
 
 // delete review by id
 router.delete('/:id', deleteReview)
