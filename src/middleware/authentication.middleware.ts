@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express"
 import { CustomError } from "./errorhandler.middleware"
 import { Role } from "../@types/global.types";
 import { verifyToken } from "../utils/jwt.utils";
-import { JwtPayload } from "jsonwebtoken";
 import User from "../models/users.model";
 
 
