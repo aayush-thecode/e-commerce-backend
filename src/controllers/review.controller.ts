@@ -91,60 +91,61 @@ export const getReviewId = asyncHandler(async (req: Request, res: Response) => {
     });
 });
 
+
 // update review by id 
 
-export const updateReview = asyncHandler(async (req: Request, res: Response) => {
+// export const updateReview = asyncHandler(async (req: Request, res: Response) => {
 
-    const { productId, reviewId, rating, comment } = req.body
+//     const { productId, reviewId, rating, review } = req.body
 
-    if (!productId || !reviewId) {
+//     if (!productId || !reviewId) {
 
-        throw new CustomError("Product ID and Review ID are required", 400)
+//         throw new CustomError("Product ID and Review ID are required", 400)
 
-    }
+//     }
 
-    const product = await Product.findById(productId);
+//     const product = await Product.findById(productId);
 
-    if (!product) {
+//     if (!product) {
 
-        throw new CustomError("Product not found", 404)
+//         throw new CustomError("Product not found", 404)
 
-    }
+//     }
 
-    const review = await Review.findById(reviewId)
+//     const review = await Review.findById(reviewId)
 
-    if (!review) {
+//     if (!review) {
 
-        throw new CustomError("Review not found", 404)
+//         throw new CustomError("Review not found", 404)
 
-    }
+//     }
 
-    // Store the old rating before updating
+//     // Store the old rating before updating
 
-    const oldRating = review.rating;
+//     const oldRating = review.rating;
 
-    // Update review fields
+//     // Update review fields
 
-    if (rating !== undefined) review.rating = rating
+//     if (rating !== undefined) review.rating = rating
 
-    if (comment !== undefined) review.review = comment
-    await review.save();
+//     if (review !== undefined) review.review = review
+//     await review.save();
 
-    // Update the average rating
+//     // Update the average rating
 
-    const totalRating = (product?.averageRating as number * product.reviews.length - oldRating + rating) / product.reviews.length
+//     const totalRating = (product?.averageRating as number * product.reviews.length - oldRating + rating) / product.reviews.length
 
-    product.averageRating = totalRating
+//     product.averageRating = totalRating
 
-    await product.save();
+//     await product.save();
 
-    res.status(200).json({
-        status: "success",
-        success: true,
-        data: review,
-        message: "Review updated successfully!",
-    });
-});
+//     res.status(200).json({
+//         status: "success",
+//         success: true,
+//         data: review,
+//         message: "Review updated successfully!",
+//     });
+// });
 
 
 
@@ -177,7 +178,7 @@ export const deleteReview = asyncHandler(async (req: Request, res: Response) => 
 
     await Review.findByIdAndDelete(review._id);
 
-    product.reviews.pull(product.reviews.filter((id) => id.toString() !== review._id.toString())) 
+    product.reviews.pull(review._id) 
 
     // Recalculate average rating
 
@@ -201,3 +202,36 @@ export const deleteReview = asyncHandler(async (req: Request, res: Response) => 
         message: "Review deleted successfully!",
     });
 });
+
+
+// update 
+
+export const update = asyncHandler(async (req:Request, res:Response) => {
+
+    const { rating, review } = req.body;
+    if (typeof rating !== 'number') {
+
+        throw new CustomError('Review must be a number type', 400);
+    }
+    const id = req.params.id;
+
+    const oldReview = await Review.findById(id);
+
+    if(!oldReview) {
+        throw new CustomError('Review not found', 404);
+    }
+
+    const product = await Product.findById(review.product);
+
+    if(!product) {
+        throw new CustomError('product not found', 404);
+    }
+    const newRating = Number(product.averageRating) * product.reviews.length - oldReview.rating + Number(rating)
+
+    product.averageRating = newRating / product.reviews.length
+
+    await product.save()
+
+    await Review.findByIdAndUpdate(id, {rating, review},{new:true})
+
+})

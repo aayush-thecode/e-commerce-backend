@@ -1,10 +1,8 @@
 import express from 'express'
-import { create, getAll, getProductById, update } from '../controllers/product.controller';
+import { create, getAll, getProductById, remove, update } from '../controllers/product.controller';
 import multer from "multer";
 import { Authenticate } from '../middleware/authentication.middleware';
 import { OnlyAdmin } from '../@types/global.types';
-import { deleteCategoryById } from '../controllers/category.controller';
-
 
 
 const router = express.Router()
@@ -35,6 +33,27 @@ router.post('/', Authenticate(OnlyAdmin), upload.fields ([
   }
 ]), create) 
 
+
+
+//update products by id 
+router.put('/:id',Authenticate(OnlyAdmin), upload.fields ([
+  {
+    name: 'coverImage',
+    maxCount:1
+  },
+  {
+    name: 'images',
+    maxCount:6
+  }
+]), update)
+
+
+//delete product by id 
+router.delete('/:id', Authenticate(OnlyAdmin), remove)
+
+//get product by id
+router.get('/:id', getProductById)
+
 //register user
 router.post('/', upload.single('coverImage'), create);
 
@@ -42,15 +61,5 @@ router.post('/', upload.single('coverImage'), create);
 //get all products
 router.get('/', getAll);
 
-
-//update products by id 
-router.put('/:id', update);
-
-
-//delete product by id 
-router.delete('/:id', deleteCategoryById)
-
-//get product by id
-router.get('/:id', getProductById)
 
 export default router; 

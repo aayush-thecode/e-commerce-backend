@@ -154,6 +154,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 //delete productby Id 
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
+
     const id = req.params.id;
 
     const product = await Product.findByIdAndDelete(id);
@@ -163,6 +164,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     }
 
     // Delete associated images if they exist
+
     const imagesToDelete: string[] = [];
     
     if (product.coverImage) {
@@ -170,6 +172,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
     }
 
     if (product.images && product.images.length > 0) {
+
         imagesToDelete.push(...product.images as string[]);
     }
 
@@ -179,7 +182,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
         await deleteFiles(imagesToDelete);
     }
 
-    res.status(200).json({
+    res.status(201).json({
         success: true,
         status: 'success',
         message: 'Product deleted successfully!'
