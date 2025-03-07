@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import { Role } from "../@types/global.types"; 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
@@ -38,7 +38,15 @@ const userSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-    }
+    },
+    wishList: [
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'product',
+        }
+]
+
 },{timestamps: true}) 
 
 const User = mongoose.model('user', userSchema)

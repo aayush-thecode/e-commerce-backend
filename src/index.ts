@@ -8,10 +8,11 @@ import path from 'path'
 
 
 //using routes
-import Category from './routes/category.routes'
-import Review from './routes/review.routes';
+import CategoryRoutes from './routes/category.routes'
+import ReviewRoutes from './routes/review.routes';
 import userRoutes from './routes/user.routes'
 import productRoutes from './routes/product.routes';
+import cartRoutes from './routes/cart.routes'
 
 
 
@@ -32,8 +33,9 @@ app.use('/api/uploads',express.static(path.join(__dirname,'../', 'uploads')))
 // using routes
 app.use('/api/user/', userRoutes)
 app.use('/api/product', productRoutes)
-app.use('/api/category', Category)
-app.use('/api/review', Review)
+app.use('/api/category', CategoryRoutes)
+app.use('/api/review', ReviewRoutes)
+app.use('/api/cart', cartRoutes)
 
 
 
