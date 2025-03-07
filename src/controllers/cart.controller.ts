@@ -31,7 +31,17 @@ export const create = asyncHandler(async (req:Request, res: Response) => {
         throw new CustomError('product not found', 404)
     }
 
-    cart.items.push({product:productId, quantity})
+    const existingProduct = cart.items.filter((item) => item.product.toString() === productId)
+
+    if(existingProduct) {
+        existingProduct[0].quantity += quantity
+
+        cart.items.push(existingProduct);
+    }else {
+
+        cart.items.push({product:productId, quantity})
+    }
+
 
     await cart.save()
 
@@ -42,3 +52,73 @@ export const create = asyncHandler(async (req:Request, res: Response) => {
     })
 
 });
+
+
+//get cart by user id 
+
+export const getCartByUserId = asyncHandler(async(req:Request, res:Response) => {
+
+    const userId = req.params.id;
+
+    const cart = await Cart.findOne({user:userId})
+
+    res.status(200).json({
+        status: 'success',
+        success: true,
+        message: 'cart fetched successfully',
+        data: cart
+    })
+})
+
+
+// clear cart 
+
+export const clearCart = asyncHandler(async(req:Request, res:Response) => {
+    const userId = req.params.userId;
+
+    const cart = await Cart.findOne({user:userId});
+
+    if(!cart) {
+        throw new CustomError('cart deos not created yet', 400)
+    }
+
+    await Cart.findOneAndDelete({user:userId});
+
+    res.status(200).json ({
+        status:'success',
+        success:true,
+        message:'cart cleared successfully!',
+        data: null
+    })
+}) 
+
+
+export const removeItemsFromCart = asyncHandler(async(req: Request, res:Response) => {
+    const productId = req.params.productId
+
+    if(!productId) {
+        throw new CustomError('product not found', 400)
+    }
+
+    const userId = req.params._id
+
+    const cart = await Cart.findOne({user: userId})
+
+    if(!cart) {
+        throw new CustomError('Cart does not created yet', 400)
+    }
+
+    // const newCart  = cart.items.filter((item) => item.product.toString() !== productId)
+
+    cart.items.pull({product:productId}) 
+
+    const updatedCart = await cart.save();
+
+    res.status(200).json({
+        success: true,
+        status:'success',
+        message: "Item removed from cart",
+        data: updatedCart
+
+    })
+})

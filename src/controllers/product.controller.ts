@@ -13,18 +13,21 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
     const body = req.body;
     const product = await Product.create(body)
     
-    console.log(req.files)
-    const {coverImage, images} = req.files as {[feildname: string]: Express.Multer.File[]}
+    const files = req.files as {[feildname: string]: Express.Multer.File[]}
 
 
-if(!coverImage) {
-    throw new CustomError('cover Image is required',400);
+// if(!files.coverImage) {
+//     throw new CustomError('cover Image is required',400);
+// }
+
+
+if(files?.coverImage) {
+    product.coverImage = files.coverImage[0]?.path
 }
 
-product.coverImage = coverImage[0]?.path
 
-if(images && images.length > 0) {
-    const imagePath: string[] = images.map((image: any, index: number) => image.path)
+if(files?.images && files?.images.length > 0) {
+    const imagePath: string[] = files?.images.map((image: any, index: number) => image.path)
     product.images = imagePath
 }
 
