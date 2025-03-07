@@ -9,7 +9,7 @@ const router = express.Router()
 router.get('/', Authenticate(OnlyAdmin), getAllReview);
 
 // get user review by Id
-router.get('/:id', getReviewId)
+router.get('/:id',Authenticate(OnlyAdmin), getReviewId)
 
 //create reviews
 router.post('/', Authenticate(onlyUser), createReview)

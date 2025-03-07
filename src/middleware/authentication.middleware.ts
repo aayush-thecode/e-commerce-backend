@@ -37,7 +37,7 @@ export const Authenticate = (
 
         const decoded = verifyToken(access_token)
 
-        if(decoded.exp && decoded.exp * 1000 > Date.now()) {
+        if(decoded.exp && decoded.exp * 1000 < Date.now()) {
 
             throw new CustomError('Unauthorized, access denied', 401);
 

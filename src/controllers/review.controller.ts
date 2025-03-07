@@ -11,12 +11,13 @@ import Product from "../models/product.model";
 export const createReview = asyncHandler(async (req: Request, res: Response) => {
 
     const body = req.body;
-
-    const{userId, productId, rating} = body
-
+    const user = req.user
 
 
-    if(!userId || !productId) {
+    const{productId, rating} = body
+
+
+    if(!productId) {
         throw new CustomError('user Id and productId is required',400);
     }
 
@@ -27,7 +28,7 @@ export const createReview = asyncHandler(async (req: Request, res: Response) => 
         throw new CustomError('product not found', 404)
     }
 
-    const newReview = await Review.create({...body, product: productId, user:userId})
+    const newReview = await Review.create({...body, product: productId, user:user._id})
     
     product.reviews.push(newReview._id)
     
@@ -81,7 +82,7 @@ export const getReviewId = asyncHandler(async (req: Request, res: Response) => {
 
     // Find reviews for the given productId
 
-    const reviews = await Review.find({ product: productId }).populate("user", "firstName lastName email")
+    const reviews = await Review.find({ product: productId }).populate("user")
 
     res.status(200).json({
         status: "success",
