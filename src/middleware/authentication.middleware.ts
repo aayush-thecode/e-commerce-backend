@@ -79,12 +79,10 @@ export const Authenticate = (
             email: decoded.email
         }
 
-        next()
+        next();
 
         } catch(err:any) {
-
-            throw new CustomError(err?.message ?? 'something went wrong',500);
-
+            next(err);
         }
 
     }
