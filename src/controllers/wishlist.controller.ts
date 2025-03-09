@@ -10,7 +10,7 @@ import mongoose from 'mongoose';
 
 export const addToWishlist = asyncHandler(async(req: Request, res:Response) => {
 
-    const productId= req.params.id; 
+    const productId = req.params.productID; 
 
     const user = req.user;
 
@@ -40,14 +40,16 @@ export const addToWishlist = asyncHandler(async(req: Request, res:Response) => {
 
     await userDocument.save();
 
-    res.status(200).json({
+    res.status(201).json({
         status: 'success',
         success: true,
-        message: 'Product added to wishlist successfully!'
+        message: 'Product added to wishlist successfully!',
+        data: userDocument.wishList
     })
 })
 
-// Remove product from wishlist
+
+// Remove product from wisilist
 
 export const removeFromWishlist = asyncHandler(async(req: Request, res:Response) => {
 
@@ -109,7 +111,7 @@ export const getWishlist = asyncHandler(async(req: Request, res:Response) => {
 // Clear entire wishlist
 
 export const clearWishlist = asyncHandler(async(req: Request, res:Response) => {
-    
+
     const user = req.user;
 
     const userDocument = await User.findById(user._id);

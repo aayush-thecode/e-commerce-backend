@@ -15,6 +15,6 @@ router.delete('/clear', Authenticate(onlyUser), clearCart);
 router.get('/:userId', Authenticate(onlyUser), getCartByUserId);
 
 //remove product from cart 
-router.get('/remove/:id',Authenticate(onlyUser), removeItemsFromCart);
+router.get('/remove/:productId',Authenticate(onlyUser), removeItemsFromCart);
 
 export default router;

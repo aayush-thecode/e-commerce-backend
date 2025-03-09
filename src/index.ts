@@ -13,6 +13,7 @@ import ReviewRoutes from './routes/review.routes';
 import userRoutes from './routes/user.routes'
 import productRoutes from './routes/product.routes';
 import cartRoutes from './routes/cart.routes'
+import wishlistRoutes from './routes/wishlist.routes'
 
 
 
@@ -36,6 +37,7 @@ app.use('/api/product', productRoutes)
 app.use('/api/category', CategoryRoutes)
 app.use('/api/review', ReviewRoutes)
 app.use('/api/cart', cartRoutes)
+app.use('/api/wishlist', wishlistRoutes)
 
 
 

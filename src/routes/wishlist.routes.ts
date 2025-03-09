@@ -1,5 +1,5 @@
 import express from 'express';
-import { addToWishlist } from '../controllers/wishlist.controller';
+import { addToWishlist, clearWishlist, getWishlist, removeFromWishlist } from '../controllers/wishlist.controller';
 import { Authenticate } from '../middleware/authentication.middleware';
 import { onlyUser } from '../@types/global.types';
 
@@ -9,5 +9,14 @@ const router = express.Router();
 //add to wishlist 
 router.post('/',Authenticate(onlyUser), addToWishlist);
 
-//update to wishlist 
-router.put('/:id',Authenticate(onlyUser), )
+//clear wishlist
+router.delete('/', Authenticate(onlyUser), clearWishlist);
+
+//get users wishlist 
+router.get('/',Authenticate(onlyUser), getWishlist);
+
+//remove product from wishlist
+router.delete('/remove/:productId', Authenticate(onlyUser), removeFromWishlist);
+
+
+export default router; 

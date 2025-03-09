@@ -61,6 +61,8 @@ export const getCartByUserId = asyncHandler(async(req:Request, res:Response) => 
     const userId = req.params.id;
 
     const cart = await Cart.findOne({user:userId})
+    .populate('user','-password')
+    .populate('items.product')
 
     res.status(200).json({
         status: 'success',
