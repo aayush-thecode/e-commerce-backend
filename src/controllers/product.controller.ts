@@ -10,51 +10,34 @@ import Category from "../models/category.model";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
 
-    const {name, price, description, category:categoryId} = req.body;
-    const admin = req.user;
-
-    const files = req.files as {[feildname: string]: Express.Multer.File[]}
-
-    if(!files.coverImage) {
-        throw new CustomError('cover Image is required',400);
-    }
-
-
-    //get category
-
-    const category = await Category.findById(categoryId) 
-
-    if(!category) {
-        throw new CustomError('category Id is required', 404);
-    }
-    const product = new Product({
-        name,
-        price,
-        description,
-        createdBy: admin._id,
-        category: category._id
-    })
-
-    if(files?.coverImage) {
-        product.coverImage = files.coverImage[0]?.path
-    }
+	const body = req.body;
+	const product = await Product.create(body);
     
-    if(files?.images && files?.images.length > 0) {
+	const { coverImage, images } = req.files as {
+		[fieldname: string]: Express.Multer.File[];
+	};
+	if (!coverImage) {
+		throw new CustomError("Cover image is required", 400);
+	}
 
-    const imagePath: string[] = files?.images.map((image: any, index: number) => image.path)
+	product.coverImage = coverImage[0]?.path;
 
-    product.images = imagePath
-}
+	if (images && images.length > 0) {
+		const imagePath: string[] = images.map(
+			(image: any, index: number) => image.path
+		);
+		product.images = imagePath;
+	}
 
-    await product.save()
+	await product.save();
 
-    res.status(201).json({
-        success:true,
-        status:'success',
-        data: product,
-        message: 'Product fetched successfully!'
-    })
-})
+	res.status(201).json({
+		status: "success",
+		success: true,
+		data: product,
+		message: "Product created successfully!",
+	});
+});
 
 
 

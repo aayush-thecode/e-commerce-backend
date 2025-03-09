@@ -32,7 +32,7 @@ export const createReview = asyncHandler(async (req: Request, res: Response) => 
     
     product.reviews.push(newReview._id)
     
-    const totalRating:number = ( product?.averageRating as number * (product.reviews.length - 1)) + Number(rating);
+    const totalRating: number = ( product?.averageRating as number * (product.reviews.length - 1)) + Number(rating);
 
     product.averageRating = totalRating / product.reviews.length 
 

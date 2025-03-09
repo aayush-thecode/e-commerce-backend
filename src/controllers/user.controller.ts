@@ -124,12 +124,12 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     if (!user) {
       throw new CustomError('Wrong credentials provided', 400)
 
-      
+      return;      
     }
 
   //-----------compare hash------------------
 
-    const isMatch = compare (password, user?.password as string);
+    const isMatch = compare (password, user.password as string);
 
     if (!isMatch) {
 
@@ -137,17 +137,19 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
       return ;
     }
-      const payload:IPayload = {
+      const payload: IPayload = {
 
           _id: user._id,
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
-          role:user.role
+          role:user.role,
 
       }
 
       const token = generateToken(payload);
+
+      console.log("🚀 ~ login ~ token:", token)
 
     res.cookie('access_token', token,{
       
