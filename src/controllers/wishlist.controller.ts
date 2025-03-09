@@ -3,12 +3,14 @@ import { asyncHandler } from '../utils/asyncHandler.utils';
 import { CustomError } from '../middleware/errorhandler.middleware';
 import Product from '../models/product.model';
 import User from '../models/users.model';
+import mongoose from 'mongoose';
 
 
+//add to wishlist 
 
 export const addToWishlist = asyncHandler(async(req: Request, res:Response) => {
 
-    const productId = req.params.id; 
+    const productId= req.params.id; 
 
     const user = req.user;
 
@@ -30,5 +32,98 @@ export const addToWishlist = asyncHandler(async(req: Request, res:Response) => {
 
                 //if product exists already in watchlist
 
-    if(userDocument.wishList.includes(product: productId))
+    if(userDocument.wishList.some(item => item.toString() === productId)) {
+        throw new CustomError('Product already in wishlist', 400);
+    }
+
+    userDocument.wishList.push(new mongoose.Types.ObjectId(productId));
+
+    await userDocument.save();
+
+    res.status(200).json({
+        status: 'success',
+        success: true,
+        message: 'Product added to wishlist successfully!'
+    })
 })
+
+// Remove product from wishlist
+
+export const removeFromWishlist = asyncHandler(async(req: Request, res:Response) => {
+
+    const productId = req.params.id;
+    const user = req.user;
+
+    if(!productId) {
+        throw new CustomError('Product Id is required', 400);
+    }
+
+    const userDocument = await User.findById(user._id);
+
+    if(!userDocument) {
+        throw new CustomError('User not found', 404);
+    }
+
+    // Check if product exists in wishlist
+
+    if(!userDocument.wishList.some(item => item.toString() === productId)) {
+        throw new CustomError('Product not in wishlist', 404);
+    }
+
+    // Remove product from wishlist
+
+    userDocument.wishList = userDocument.wishList.filter(
+        item => item.toString() !== productId
+    );
+    
+    await userDocument.save();
+
+    res.status(200).json({
+        status: 'success',
+        success: true,
+        message: 'Product removed from wishlist successfully!'
+    });
+});
+
+// Get user's wishlist
+
+export const getWishlist = asyncHandler(async(req: Request, res:Response) => {
+
+    const user = req.user;
+
+    const userDocument = await User.findById(user._id).populate('wishList');
+
+    if(!userDocument) {
+        throw new CustomError('User not found', 404);
+    }
+
+    res.status(200).json({
+        status: 'success',
+        success: true,
+        data: userDocument,
+        message: 'Wishlist fetched successfully!'
+    });
+});
+
+
+// Clear entire wishlist
+
+export const clearWishlist = asyncHandler(async(req: Request, res:Response) => {
+    
+    const user = req.user;
+
+    const userDocument = await User.findById(user._id);
+
+    if(!userDocument) {
+        throw new CustomError('User not found', 404);
+    }
+
+    userDocument.wishList = [];
+    await userDocument.save();
+
+    res.status(200).json({
+        status: 'success',
+        success: true,
+        message: 'Wishlist cleared successfully!'
+    });
+});
