@@ -67,4 +67,3 @@ app.use((error:any, req:Request, res:Response, next: NextFunction) => {
 //fields 
 
 app.listen(PORT, () => console.log(`server is running at http://localhost:${PORT}`))
- 
