@@ -22,7 +22,7 @@ export const create = asyncHandler(async (req:Request, res: Response) => {
     cart = await Cart.findOne({user:userId});
 
     if(!cart) {
-        cart = new Cart({user:userId, items:[]})
+        cart = new Cart({user:userId, items: []})
     }
 
     const product = await Product.findById(productId)
@@ -48,7 +48,8 @@ export const create = asyncHandler(async (req:Request, res: Response) => {
     res.status(201).json({
         status: 'success',
         success: true,
-        message: 'product added to cart'
+        message: 'product added to cart',
+        data: cart
     })
 
 });
