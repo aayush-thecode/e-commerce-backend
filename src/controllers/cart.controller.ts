@@ -8,6 +8,7 @@ import Product from "../models/product.model";
 export const create = asyncHandler(async (req:Request, res: Response) => {
 
     const {userId, productId, quantity} = req.body;
+    console.log("🚀 ~ create ~ body:", req.body)
 
     let cart
 
@@ -31,10 +32,11 @@ export const create = asyncHandler(async (req:Request, res: Response) => {
         throw new CustomError('product not found', 404)
     }
 
-    const existingProduct = cart.items.filter((item) => item.product.toString() === productId)
+    const existingProduct = cart.items.find((item) => item.product.toString() === productId)
+    console.log("🚀 ~ create ~ existingProduct:", existingProduct)
 
     if(existingProduct) {
-        existingProduct[0].quantity += quantity
+        existingProduct.quantity += Number(quantity)
 
         cart.items.push(existingProduct);
     }else {
