@@ -146,4 +146,58 @@ export const deleteOrder = asyncHandler(async(req:Request, res:Response) => {
     })
 })
 
-//cancel own 
+//cancel order 
+
+export const cancelOrder = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+
+    const { orderId, productId } = req.params;
+
+    const userId = req.user._id;
+
+    const order = await Order.findById(orderId);
+
+    if(!order) {
+        throw new CustomError('Order not found', 404);
+    }
+
+    if(order.user.toString() !== userId.toString()) {
+        throw new CustomError('Unauthorized access to this order', 403);
+    }
+
+    // check the order status and allow specefic cancelliation
+
+    if(['delivered', 'shipped', 'cancelled'].includes(order.status)) {
+        throw new CustomError(`Order cannot be canceled when in ${order.status} status`, 400);
+    }
+
+    if(productId) {
+        const productIndex = order.items.findIndex(
+            item => item.product.toString() === productId
+        );
+
+        if(productIndex === -1) {
+            throw new CustomError('Product not found in this order', 404)
+        }  
+
+        const canceledProductTotal = order.items[productIndex].totalPrice;
+
+        order.items.splice(productIndex, 1);
+
+        //recalculating order total 
+        order.totalAmount -= canceledProductTotal;
+
+        if(order.items.length === 0) {
+            order.status = 'cancelled';
+            order.cancelledAt = new Date()
+        }
+
+        await order.save();
+
+        res.status(200).json({
+            success: true,
+            status: 'success',
+            message: 'order cancelled successfully!',
+            data: order
+        })
+    }
+})

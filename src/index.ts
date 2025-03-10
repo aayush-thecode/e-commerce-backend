@@ -14,7 +14,7 @@ import userRoutes from './routes/user.routes'
 import productRoutes from './routes/product.routes';
 import cartRoutes from './routes/cart.routes'
 import wishlistRoutes from './routes/wishlist.routes'
-
+import orderRoutes from './routes/order.routes'
 
 
 const app = express()
@@ -32,12 +32,13 @@ app.use('/api/uploads',express.static(path.join(__dirname,'../', 'uploads')))
 
 
 // using routes
-app.use('/api/user/', userRoutes)
-app.use('/api/product', productRoutes)
-app.use('/api/category', CategoryRoutes)
-app.use('/api/review', ReviewRoutes)
-app.use('/api/cart', cartRoutes)
-app.use('/api/wishlist', wishlistRoutes)
+app.use('/api/user/', userRoutes);
+app.use('/api/product', productRoutes);
+app.use('/api/category', CategoryRoutes);
+app.use('/api/review', ReviewRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/order', orderRoutes);
 
 
 
