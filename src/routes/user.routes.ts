@@ -1,7 +1,7 @@
 import express from 'express';
 import { deleteUserById, getAllUserData, getUserDataById, login, register, update } from '../controllers/user.controller';
 import { Authenticate } from '../middleware/authentication.middleware';
-import { allUser, OnlyAdmin, onlyUser } from '../@types/global.types';
+import { OnlyAdmin, onlyUser } from '../@types/global.types';
 
 const router = express.Router()
 

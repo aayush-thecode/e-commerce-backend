@@ -78,12 +78,12 @@ export const register = asyncHandler(async (req: Request, res:Response) => {
 export const update = asyncHandler(async  (req: Request, res:Response) => {
 
       const id = req.params.id;
-      const {firstName, LastName, phoneNumber, gender} = req.body;
+      const {firstName, lastName, phoneNumber, gender} = req.body;
 
       const user = await User.findByIdAndUpdate(id, {
 
           firstName,
-          LastName,
+          lastName,
           phoneNumber,
           gender
 
