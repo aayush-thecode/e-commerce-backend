@@ -1,10 +1,16 @@
 import {Schema, model} from 'mongoose'
+import { v4 as uuidv4 } from 'uuid';
 
 const orderSchema = new Schema ({
     user: {
         type:Schema.Types.ObjectId,
         ref:'user',
         required: true,
+    },
+    orderId:{
+        type: String,
+        required: true,
+        default:()  => `ORD -${uuidv4 ().split("-")[0]}`,
     },
     status: {
         type: String,

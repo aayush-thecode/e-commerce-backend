@@ -98,6 +98,8 @@ export const clearCart = asyncHandler(async(req:Request, res:Response) => {
 }) 
 
 
+//remove items from cart 
+
 export const removeItemsFromCart = asyncHandler(async(req: Request, res:Response) => {
     const productId = req.params.productId
 

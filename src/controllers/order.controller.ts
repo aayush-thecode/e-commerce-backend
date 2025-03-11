@@ -148,7 +148,7 @@ export const deleteOrder = asyncHandler(async(req:Request, res:Response) => {
 
 //cancel order 
 
-export const cancelOrder = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+export const cancelOrder = asyncHandler(async (req: Request, res: Response) => {
 
     const { orderId, productId } = req.params;
 
