@@ -20,6 +20,7 @@ interface IMailOptions {
 
 export const sendEmail = async (mailOptions: IMailOptions) => {
 
+   try {
     const mailOption = {
         to:mailOptions.to,
         from: `'${process.env.MAIL_FROM}' <${process.env.SNTP_EMAIL}>`, // sender address
@@ -28,4 +29,8 @@ export const sendEmail = async (mailOptions: IMailOptions) => {
     }
 
     await transporter.sendMail(mailOption);
+    
+   } catch(err) {
+    console.log(err)
+   }
 }
