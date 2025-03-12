@@ -43,17 +43,27 @@ export const placeOrder = asyncHandler(async(req: Request, res: Response) => {
         totalAmount
     });
 
-    await order.save()
+ 
+
+    const newOrder = await order.save();
+    const populatedOrder = await Order.findById(newOrder._id).populate("items.product")
+
+    if(!populatedOrder) {
+        throw new CustomError('order not created', 404);
+    }
 
     await sendOrderConfirmationEmail({
         to: req.user.email,
+        orderDetails: populatedOrder
     });
+
+    await Cart.findByIdAndDelete(cart._id)
 
     res.status(201).json({
         status: 'success',
         success: true,
         message: 'order placed successfully!',
-        data: order
+        data: populatedOrder
     })
 })
 

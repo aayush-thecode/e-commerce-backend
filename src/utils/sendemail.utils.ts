@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 interface IMailOptions {
     to: string;
     subject: string;
-    text: string;
+    html: string;
 }
 
 export const sendEmail = async (mailOptions: IMailOptions) => {
@@ -23,9 +23,9 @@ export const sendEmail = async (mailOptions: IMailOptions) => {
    try {
     const mailOption = {
         to:mailOptions.to,
-        from: `'${process.env.MAIL_FROM}' <${process.env.SNTP_EMAIL}>`, // sender address
+        from: `'${process.env.MAIL_FROM}' <${process.env.SMTP_EMAIL}>`, // sender address
         subject: mailOptions.subject,
-        text:mailOptions.text
+        html:mailOptions.html
     }
 
     await transporter.sendMail(mailOption);
