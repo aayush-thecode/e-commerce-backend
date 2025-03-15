@@ -1,6 +1,4 @@
 
-
-
 export const getPaginationData = (
     page: number,
     limit: number,

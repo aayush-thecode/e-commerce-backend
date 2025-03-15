@@ -4,6 +4,7 @@ import { CustomError } from '../middleware/errorhandler.middleware';
 import Product from '../models/product.model';
 import User from '../models/users.model';
 import mongoose from 'mongoose';
+import { getPaginationData } from '../utils/pagination.utils';
 
 
 //add to wishlist 
@@ -89,21 +90,43 @@ export const removeFromWishlist = asyncHandler(async(req: Request, res:Response)
 
 // Get user's wishlist
 
-export const getWishlist = asyncHandler(async(req: Request, res:Response) => {
+export const getWishlist = asyncHandler(async (req: Request, res: Response) => {
+
+    const { limit, page } = req.query;
+
+    const currentPage = parseInt(page as string) || 1;
+    const queryLimit = parseInt(limit as string) || 10;
+
+    const skip = (currentPage - 1) * queryLimit;
 
     const user = req.user;
 
-    const userDocument = await User.findById(user._id).populate('wishList');
+    const userDocument = await User.findById(user._id);
 
-    if(!userDocument) {
+    if (!userDocument) {
         throw new CustomError('User not found', 404);
     }
+
+    const totalCount = userDocument.wishList.length;
+
+    const paginatedWishlist = userDocument.wishList.slice(skip, skip + queryLimit);
+
+    const populatedWishlist = await Product.find({
+        _id: { $in: paginatedWishlist },
+    })
+        .populate('createdBy')
+        .populate('category');
+
+    const pagination = getPaginationData(currentPage, queryLimit, totalCount);
 
     res.status(200).json({
         status: 'success',
         success: true,
-        data: userDocument,
-        message: 'Wishlist fetched successfully!'
+        data: {
+            data: populatedWishlist,
+            pagination, 
+        },
+        message: 'Wishlist fetched successfully!',
     });
 });
 
