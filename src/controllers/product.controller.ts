@@ -4,6 +4,7 @@ import Product from "../models/product.model";
 import { CustomError } from "../middleware/errorhandler.middleware";
 import { deleteFiles } from "../utils/deleteFIles.utils";
 import Category from "../models/category.model";
+import { getPaginationData } from "../utils/pagination.utils";
 
 
 //create product 
@@ -45,12 +46,53 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
 
-    const products = await Product.find({}).populate('createdBy')
+    const {limit, page, query, category, minPrice, maxPrice } = req.query;
+
+    const currentPage = parseInt(page as string)  || 1
+    const queryLimit = parseInt(limit as string) || 10; 
+    const skip = (currentPage - 1) * queryLimit;
+
+    let filter: Record<string, any> = {};
+
+    if(category) {
+        filter.category = category
+    }
+
+    if(minPrice && maxPrice) {
+        filter.price = {
+            $lte: parseFloat(maxPrice as string),
+            $gte: parseFloat(minPrice as string),
+        };
+    }
+
+    if(query) {
+        filter.$or = [
+            {
+                name: { $regex : query, $options: 'i' },
+            },
+            {
+                description: { $regex : query, $options: 'i' }
+            }
+        ];
+    }
+
+    const products = await Product.find(filter)
+    .skip(skip)
+    .limit(queryLimit)
+    .populate('createdBy')
+    .populate('category');
+
+    const totalCount = await Product.countDocuments(filter);
+
+    const pagination = getPaginationData(currentPage, queryLimit, totalCount);
 
     res.status(200).json ({
         success:true,
         status:'success',
-        data: products,
+        data: {
+            data:products,
+            pagination,
+        },
         message: 'Product fetched successfully!'
     })
 })
