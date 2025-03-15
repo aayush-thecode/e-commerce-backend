@@ -12,7 +12,7 @@ router.post('/add', Authenticate(onlyUser), create)
 router.delete('/clear', Authenticate(onlyUser), clearCart);
 
 //get all 
-router.get('/:userId', Authenticate(onlyUser), getCartByUserId);
+router.get('/:id', Authenticate(onlyUser), getCartByUserId);
 
 //remove product from cart 
 router.get('/remove/:productId',Authenticate(onlyUser), removeItemsFromCart);
