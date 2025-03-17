@@ -46,7 +46,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
 
-    const {limit, page, query, category, minPrice, maxPrice } = req.query;
+    const {limit, page, query, category, minPrice, maxPrice, sortBy = 'createdAt', order = 'DESC' } = req.query;
 
     const currentPage = parseInt(page as string)  || 1
     const queryLimit = parseInt(limit as string) || 10; 
@@ -80,7 +80,8 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
     .skip(skip)
     .limit(queryLimit)
     .populate('createdBy')
-    .populate('category');
+    .populate('category')
+    .sort({[sortBy as string]: order ==='DESC' ? -1 : 1 });
 
     const totalCount = await Product.countDocuments(filter);
 

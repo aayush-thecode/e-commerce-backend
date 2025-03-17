@@ -73,7 +73,7 @@ export const placeOrder = asyncHandler(async(req: Request, res: Response) => {
 
 export const getAllOrder = asyncHandler(async(req: Request, res: Response) => {
 
-    const {page, limit, status, user, minAmount, maxAmount, startDate, endDate, orderId, query} = req.query;
+    const {page, limit, status, user, minAmount, maxAmount, startDate, endDate, query} = req.query;
     
     const currentPage = parseInt(page as string) || 1;
     const queryLimit = parseInt(limit as string) || 10;
@@ -81,30 +81,23 @@ export const getAllOrder = asyncHandler(async(req: Request, res: Response) => {
     
     let filter: Record<string, any> = {};
     
-    // Filter by status
     if(status) {
         filter.status = status;
     }
     
-    // Filter by user
     if(user) {
         filter.user = user;
     }
     
-    // Filter by orderId
-    if(orderId) {
-        filter.orderId = { $regex: orderId, $options: 'i' };
-    }
     
-    //text search query 
     if(query) {
-        filter.$or = [
+        filter.orderId = [
             {
                 orderId: { regex: query, $options: 'i'}
             }
         ]
     }
-    // Filter by price range
+
     if(minAmount && maxAmount) {
         filter.totalAmount = {
             $gte: parseFloat(minAmount as string),
@@ -132,7 +125,7 @@ export const getAllOrder = asyncHandler(async(req: Request, res: Response) => {
     const orders = await Order.find(filter)
         .skip(skip)
         .limit(queryLimit)
-        .sort({ createdAt: -1 }) // Most recent orders first
+        .sort({ createdAt: -1 }) 
         .populate('items.product')
         .populate('user', '-password');
     
