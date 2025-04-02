@@ -85,6 +85,7 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
 	const products = await Product.find(filter)
 		.skip(skip)
 		.limit(queryLimit)
+		.populate("createdBy", '-password')
 		.populate("category")
 		.sort({ [sortBy as string]: order === "DESC" ? -1 : 1 });
 

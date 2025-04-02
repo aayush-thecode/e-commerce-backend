@@ -70,7 +70,7 @@ exports.getAll = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
     const products = yield product_model_1.default.find(filter)
         .skip(skip)
         .limit(queryLimit)
-        .populate("createdBy")
+        .populate("createdBy", '-password')
         .populate("category")
         .sort({ [sortBy]: order === "DESC" ? -1 : 1 });
     const totalCount = yield product_model_1.default.countDocuments(filter);
