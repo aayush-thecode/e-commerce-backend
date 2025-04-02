@@ -28,9 +28,13 @@ connectDatabase(DB_URI)
 
 //using middleware
 app.use(express.urlencoded({extended: false }));
-app.use('/api/uploads',express.static(path.join(__dirname,'../', 'uploads')))
+app.use(express.json());
+
+
 
 //serving static files
+app.use('/api/uploads',express.static(path.join(__dirname,'../', 'uploads')))
+
 app.use('/',(req:Request, res:Response) => {
     res.status(200).json({message:'server is up & running'});
 })
