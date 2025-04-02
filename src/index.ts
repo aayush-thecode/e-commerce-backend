@@ -30,6 +30,11 @@ connectDatabase(DB_URI)
 app.use(express.urlencoded({extended: false }));
 app.use('/api/uploads',express.static(path.join(__dirname,'../', 'uploads')))
 
+//serving static files
+app.use('/',(req:Request, res:Response) => {
+    res.status(200).json({message:'server is up & running'});
+})
+
 
 // using routes
 app.use('/api/user/', userRoutes);
