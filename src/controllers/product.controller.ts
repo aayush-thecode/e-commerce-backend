@@ -45,58 +45,63 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 // getall product data 
 
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
+	const {
+		limit,
+		page,
+		query,
+		category,
+		minPrice,
+		maxPrice,
+		sortBy = "createdAt",
+		order = "DESC",
+	} = req.query;
+	const queryLimit = parseInt(limit as string) || 10;
+	const currentPage = parseInt(page as string) || 1;
+	const skip = (currentPage - 1) * queryLimit;
+	let filter: Record<string, any> = {};
 
-    const {limit, page, query, category, minPrice, maxPrice, sortBy = 'createdAt', order = 'DESC' } = req.query;
+	if (category) {
+		filter.category = category;
+	}
 
-    const currentPage = parseInt(page as string)  || 1
-    const queryLimit = parseInt(limit as string) || 10; 
-    const skip = (currentPage - 1) * queryLimit;
+	if (minPrice && maxPrice) {
+		filter.price = {
+			$lte: parseFloat(maxPrice as string),
+			$gte: parseFloat(minPrice as string),
+		};
+	}
 
-    let filter: Record<string, any> = {};
+	if (query) {
+		filter.$or = [
+			{
+				name: { $regex: query, $options: "i" },
+			},
+			{
+				description: { $regex: query, $options: "i" },
+			},
+		];
+	}
 
-    if(category) {
-        filter.category = category
-    }
+	const products = await Product.find(filter)
+		.skip(skip)
+		.limit(queryLimit)
+		.populate("category")
+		.sort({ [sortBy as string]: order === "DESC" ? -1 : 1 });
 
-    if(minPrice && maxPrice) {
-        filter.price = {
-            $lte: parseFloat(maxPrice as string),
-            $gte: parseFloat(minPrice as string),
-        };
-    }
+	const totalCount = await Product.countDocuments(filter);
 
-    if(query) {
-        filter.$or = [
-            {
-                name: { $regex : query, $options: 'i' },
-            },
-            {
-                description: { $regex : query, $options: 'i' }
-            }
-        ];
-    }
+	const pagination = getPaginationData(currentPage, queryLimit, totalCount);
 
-    const products = await Product.find(filter)
-    .skip(skip)
-    .limit(queryLimit)
-    .populate('createdBy')
-    .populate('category')
-    .sort({[sortBy as string]: order ==='DESC' ? -1 : 1 });
-
-    const totalCount = await Product.countDocuments(filter);
-
-    const pagination = getPaginationData(currentPage, queryLimit, totalCount);
-
-    res.status(200).json ({
-        success:true,
-        status:'success',
-        data: {
-            data:products,
-            pagination,
-        },
-        message: 'Product fetched successfully!'
-    })
-})
+	res.status(200).json({
+		success: true,
+		status: "success",
+		data: {
+			data: products,
+			pagination,
+		},
+		message: "Products fetched successfully!",
+	});
+});
 
 
 // get product by id

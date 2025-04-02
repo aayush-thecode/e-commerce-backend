@@ -43,9 +43,9 @@ exports.create = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
 }));
 // getall product data 
 exports.getAll = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { limit, page, query, category, minPrice, maxPrice, sortBy = 'createdAt', order = 'DESC' } = req.query;
-    const currentPage = parseInt(page) || 1;
+    const { limit, page, query, category, minPrice, maxPrice, sortBy = "createdAt", order = "DESC", } = req.query;
     const queryLimit = parseInt(limit) || 10;
+    const currentPage = parseInt(page) || 1;
     const skip = (currentPage - 1) * queryLimit;
     let filter = {};
     if (category) {
@@ -60,29 +60,29 @@ exports.getAll = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
     if (query) {
         filter.$or = [
             {
-                name: { $regex: query, $options: 'i' },
+                name: { $regex: query, $options: "i" },
             },
             {
-                description: { $regex: query, $options: 'i' }
-            }
+                description: { $regex: query, $options: "i" },
+            },
         ];
     }
     const products = yield product_model_1.default.find(filter)
         .skip(skip)
         .limit(queryLimit)
-        .populate('createdBy')
-        .populate('category')
-        .sort({ [sortBy]: order === 'DESC' ? -1 : 1 });
+        .populate("createdBy")
+        .populate("category")
+        .sort({ [sortBy]: order === "DESC" ? -1 : 1 });
     const totalCount = yield product_model_1.default.countDocuments(filter);
     const pagination = (0, pagination_utils_1.getPaginationData)(currentPage, queryLimit, totalCount);
     res.status(200).json({
         success: true,
-        status: 'success',
+        status: "success",
         data: {
             data: products,
             pagination,
         },
-        message: 'Product fetched successfully!'
+        message: "Products fetched successfully!",
     });
 }));
 // get product by id
