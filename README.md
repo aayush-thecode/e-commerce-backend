@@ -1,8 +1,8 @@
-E-Commerce Backend (TypeScript + Node.js + MongoDB)
+# E-Commerce Backend (TypeScript + Node.js + MongoDB)
 
 This is a backend server for an e-commerce application built using Node.js, Express.js, MongoDB, and TypeScript. It handles user authentication, product management, orders, and other essential functionalities.
 
-🚀 Features
+# 🚀 Features
 
 User Authentication (Register, Login, JWT-based Auth)
 
@@ -18,7 +18,7 @@ File Uploads (multer)
 
 Email Notifications (nodemailer)
 
-🛠️ Installation & Setup
+# 🛠️ Installation & Setup
 
 1️⃣ Clone the Repository
 
@@ -41,7 +41,7 @@ EMAIL_PASS=your-email-password
 
 4️⃣ Run the Server
 
-For Development:
+# For Development:
 
 npm run dev
 
@@ -50,9 +50,9 @@ For Production:
 npm run build
 npm start
 
-📌 API Routes
+# 📌 API Routes
 
-🔑 Authentication
+# 🔑 Authentication
 
 POST /api/auth/register → Register a new user
 
@@ -60,7 +60,7 @@ POST /api/auth/login → User login
 
 GET /api/auth/profile → Get user profile (Authenticated)
 
-🛒 Products
+# 🛒 Products
 
 GET /api/products → Get all products
 
@@ -70,7 +70,7 @@ PUT /api/products/:id → Update a product (Admin)
 
 DELETE /api/products/:id → Delete a product (Admin)
 
-🛍️ Orders & Cart
+# 🛍️ Orders & Cart
 
 POST /api/orders → Place an order
 
@@ -80,7 +80,7 @@ POST /api/cart → Add item to cart
 
 DELETE /api/cart/:id → Remove item from cart
 
-⚙️ Tech Stack
+# ⚙️ Tech Stack
 
 Backend: Node.js, Express.js, TypeScript
 
@@ -102,7 +102,7 @@ Global Error Handling Middleware
 
 Modular Route & Controller Structure
 
-🛠️ Contributing
+# 🛠️ Contributing
 
 Fork the repo
 
