@@ -96,7 +96,7 @@ export const getAllReview = asyncHandler(async (req: Request, res: Response) => 
         },
         message: 'review fetched successfully!'
     })
-})
+});
 
 //get review data by product Id
 
