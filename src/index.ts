@@ -15,6 +15,7 @@ import productRoutes from './routes/product.routes';
 import cartRoutes from './routes/cart.routes'
 import wishlistRoutes from './routes/wishlist.routes'
 import orderRoutes from './routes/order.routes'
+import cors from 'cors';
 
 
 const app = express()
@@ -27,6 +28,9 @@ connectDatabase(DB_URI)
 
 
 //using middleware
+app.use(cors({
+    origin: '*'
+}));
 app.use(express.urlencoded({extended: false }));
 app.use(express.json());
 
