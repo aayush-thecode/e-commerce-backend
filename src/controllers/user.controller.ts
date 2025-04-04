@@ -160,19 +160,18 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
     if (!user) {
       throw new CustomError('Wrong credentials provided', 400)
-
-      return;      
+  
     }
 
   //-----------compare hash------------------
 
-    const isMatch = compare (password, user.password as string);
+    const isMatch = await compare(password, user.password as string);
 
     if (!isMatch) {
 
       throw new CustomError('Wrong credentials provided', 400)
 
-      return ;
+
     }
       const payload: IPayload = {
 
