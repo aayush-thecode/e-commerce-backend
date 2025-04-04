@@ -74,7 +74,7 @@ exports.getUserDataById = (0, asyncHandler_utils_1.asyncHandler)((req, res) => _
 exports.register = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     if (!body.password) {
-        throw new errorhandler_middleware_1.CustomError('password us required', 400);
+        throw new errorhandler_middleware_1.CustomError('password is required', 400);
     }
     const hashedPassword = yield (0, bcrypt_utils_1.hash)(body.password);
     console.log("🚀 ~ register ~ hashedPassword:", hashedPassword);

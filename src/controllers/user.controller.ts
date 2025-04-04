@@ -88,7 +88,7 @@ export const register = asyncHandler(async (req: Request, res:Response) => {
       const body = req.body;
 
       if(!body.password) {
-          throw new CustomError('password us required', 400)
+          throw new CustomError('password is required', 400)
       }
       const hashedPassword = await hash(body.password)
       
