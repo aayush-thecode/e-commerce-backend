@@ -6,7 +6,7 @@ import { OnlyAdmin, onlyUser } from '../@types/global.types';
 const router = express.Router()
 
 //register user
-router.post('/register', register);
+router.post('/', register);
 
 // update user profile
 router.put('/:id', Authenticate(onlyUser), update)

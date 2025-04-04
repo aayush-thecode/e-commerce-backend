@@ -9,7 +9,7 @@ const authentication_middleware_1 = require("../middleware/authentication.middle
 const global_types_1 = require("../@types/global.types");
 const router = express_1.default.Router();
 //register user
-router.post('/register', user_controller_1.register);
+router.post('/', user_controller_1.register);
 // update user profile
 router.put('/:id', (0, authentication_middleware_1.Authenticate)(global_types_1.onlyUser), user_controller_1.update);
 // login 
