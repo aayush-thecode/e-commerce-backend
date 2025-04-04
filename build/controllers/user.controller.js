@@ -80,6 +80,7 @@ exports.register = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaite
     console.log("🚀 ~ register ~ hashedPassword:", hashedPassword);
     body.password = hashedPassword;
     const user = yield users_model_1.default.create(body);
+    console.log(user);
     res.status(201).json({
         status: 'success',
         success: true,

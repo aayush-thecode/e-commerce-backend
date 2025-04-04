@@ -98,6 +98,7 @@ export const register = asyncHandler(async (req: Request, res:Response) => {
       body.password = hashedPassword
 
       const user= await User.create(body)
+      console.log(user);
 
       res.status(201).json ({
           status: 'success',
