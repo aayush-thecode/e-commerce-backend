@@ -21,7 +21,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 		throw new CustomError("Cover image is required", 400);
 	}
 
-    console.log(coverImage, Image);
+    console.log(coverImage, images);
 
 	product.coverImage = coverImage[0]?.path;
 
