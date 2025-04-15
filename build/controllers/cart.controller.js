@@ -19,8 +19,9 @@ const cart_model_1 = require("../models/cart.model");
 const product_model_1 = __importDefault(require("../models/product.model"));
 const pagination_utils_1 = require("../utils/pagination.utils");
 exports.create = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId, productId, quantity } = req.body;
+    const { productId, quantity } = req.body;
     console.log("🚀 ~ create ~ body:", req.body);
+    const userId = req.user._id;
     let cart;
     if (!userId) {
         throw new errorhandler_middleware_1.CustomError('userID is required', 400);

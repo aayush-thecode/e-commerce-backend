@@ -8,8 +8,10 @@ import { getPaginationData } from "../utils/pagination.utils";
 
 export const create = asyncHandler(async (req:Request, res: Response) => {
 
-    const {userId, productId, quantity} = req.body;
+    const {productId, quantity} = req.body;
     console.log("🚀 ~ create ~ body:", req.body)
+
+    const userId = req.user._id;
 
     let cart
 
