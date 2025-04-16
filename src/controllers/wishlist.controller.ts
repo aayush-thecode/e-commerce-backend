@@ -11,7 +11,7 @@ import { getPaginationData } from '../utils/pagination.utils';
 
 export const addToWishlist = asyncHandler(async(req: Request, res:Response) => {
 
-    const productId = req.params.productID; 
+    const productId = req.body.productId; 
 
     const user = req.user;
 

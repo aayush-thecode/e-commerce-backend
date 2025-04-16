@@ -14,7 +14,7 @@ export const createReview = asyncHandler(async (req: Request, res: Response) => 
     const user = req.user
 
 
-    const{productId, rating} = body
+    const{productId, rating} = body;
 
 
     if(!productId) {
