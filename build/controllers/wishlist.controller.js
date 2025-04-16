@@ -21,7 +21,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const pagination_utils_1 = require("../utils/pagination.utils");
 //add to wishlist 
 exports.addToWishlist = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const productId = req.params.productID;
+    const productId = req.body.productId;
     const user = req.user;
     if (!productId) {
         throw new errorhandler_middleware_1.CustomError('Product Id is required', 404);
