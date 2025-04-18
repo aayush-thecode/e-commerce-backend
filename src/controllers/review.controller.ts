@@ -34,7 +34,7 @@ export const createReview = asyncHandler(async (req: Request, res: Response) => 
     
     const totalRating: number = ( product?.averageRating as number * (product.reviews.length - 1)) + Number(rating);
 
-    product.averageRating = totalRating / product.reviews.length 
+    product.averageRating = Math.ceil(totalRating / product.reviews.length).toPrecision(1);
 
     await product.save()
 
@@ -110,7 +110,7 @@ export const getReviewId = asyncHandler(async (req: Request, res: Response) => {
 
     }
 
-    const product = await Review.findById(productId)
+    const product = await Product.findById(productId)
 
     if (!product) {
 
