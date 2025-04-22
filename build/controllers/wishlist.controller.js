@@ -69,7 +69,8 @@ exports.removeFromWishlist = (0, asyncHandler_utils_1.asyncHandler)((req, res) =
     res.status(200).json({
         status: 'success',
         success: true,
-        message: 'Product removed from wishlist successfully!'
+        message: 'Product removed from wishlist successfully!',
+        updatedWishlist: userDocument.wishList,
     });
 }));
 // Get user's wishlist
