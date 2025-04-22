@@ -51,6 +51,7 @@ exports.addToWishlist = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __a
 exports.removeFromWishlist = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const productId = req.params.id;
     const user = req.user;
+    console.log(req.user);
     if (!productId) {
         throw new errorhandler_middleware_1.CustomError('Product Id is required', 400);
     }

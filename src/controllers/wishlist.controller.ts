@@ -57,6 +57,8 @@ export const removeFromWishlist = asyncHandler(async(req: Request, res:Response)
     const productId = req.params.id;
     const user = req.user;
 
+    console.log(req.user);
+
     if(!productId) {
         throw new CustomError('Product Id is required', 400);
     }
