@@ -49,7 +49,7 @@ exports.addToWishlist = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __a
 }));
 // Remove product from wisilist
 exports.removeFromWishlist = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const productId = req.params.id;
+    const productId = req.params.productId;
     const user = req.user;
     console.log(req.user);
     if (!productId) {
