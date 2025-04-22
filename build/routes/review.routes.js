@@ -11,7 +11,7 @@ const router = express_1.default.Router();
 //get all user review
 router.get('/', (0, authentication_middleware_1.Authenticate)(global_types_1.OnlyAdmin), review_controller_1.getAllReview);
 // get user review by Id
-router.get('/:id', (0, authentication_middleware_1.Authenticate)(global_types_1.OnlyAdmin), review_controller_1.getReviewId);
+router.get('/:productId', review_controller_1.getReviewId);
 //create reviews
 router.post('/', (0, authentication_middleware_1.Authenticate)(global_types_1.onlyUser), review_controller_1.createReview);
 // update review by id

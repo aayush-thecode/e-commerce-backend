@@ -142,7 +142,7 @@ exports.login = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(v
         status: "success",
         success: true,
         message: "Login successful",
-        token,
+        token, user
     });
 }));
 //delete user by id 

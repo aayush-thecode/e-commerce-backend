@@ -33,7 +33,7 @@ exports.createReview = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __aw
     const newReview = yield review_model_1.default.create(Object.assign(Object.assign({}, body), { product: productId, user: user._id }));
     product.reviews.push(newReview._id);
     const totalRating = ((product === null || product === void 0 ? void 0 : product.averageRating) * (product.reviews.length - 1)) + Number(rating);
-    product.averageRating = totalRating / product.reviews.length;
+    product.averageRating = Math.ceil(totalRating / product.reviews.length).toPrecision(1);
     yield product.save();
     res.status(201).json({
         status: 'success',
@@ -86,7 +86,7 @@ exports.getReviewId = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awa
     if (!productId) {
         throw new errorhandler_middleware_1.CustomError('review data not found', 400);
     }
-    const product = yield review_model_1.default.findById(productId);
+    const product = yield product_model_1.default.findById(productId);
     if (!product) {
         throw new errorhandler_middleware_1.CustomError("Product not found", 404);
     }
