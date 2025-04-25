@@ -1,5 +1,5 @@
 import express from 'express';
-import { deleteUserById, getAllUserData, getUserDataById, login, register, update } from '../controllers/user.controller';
+import { adminLogin, deleteUserById, getAllUserData, getUserDataById, login, register, update } from '../controllers/user.controller';
 import { Authenticate } from '../middleware/authentication.middleware';
 import { OnlyAdmin, onlyUser } from '../@types/global.types';
 
@@ -22,5 +22,8 @@ router.get('/:id',Authenticate(OnlyAdmin) ,getUserDataById )
 
 //delete user by id 
 router.delete('/:id',Authenticate(OnlyAdmin) ,deleteUserById)
+
+//admin login
+router.post('/:id', Authenticate(OnlyAdmin), adminLogin);
 
 export default router; 

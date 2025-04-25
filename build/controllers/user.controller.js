@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUserById = exports.login = exports.update = exports.register = exports.getUserDataById = exports.getAllUserData = void 0;
+exports.adminLogin = exports.deleteUserById = exports.login = exports.update = exports.register = exports.getUserDataById = exports.getAllUserData = void 0;
 const users_model_1 = __importDefault(require("../models/users.model"));
 const bcrypt_utils_1 = require("../utils/bcrypt.utils");
 const jwt_utils_1 = require("../utils/jwt.utils");
@@ -157,5 +157,42 @@ exports.deleteUserById = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __
         success: true,
         message: 'user deleted sucessfully',
         data: deleteUserId,
+    });
+}));
+//admin login only
+exports.adminLogin = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = req.body;
+    if (!email) {
+        throw new errorhandler_middleware_1.CustomError('email is required', 400);
+    }
+    if (!password) {
+        throw new errorhandler_middleware_1.CustomError('Password is required', 400);
+    }
+    const admin = yield users_model_1.default.findOne({ email });
+    if (!admin) {
+        throw new errorhandler_middleware_1.CustomError('Wrong credentials provided', 400);
+    }
+    //compare hash password
+    const isMatch = yield (0, bcrypt_utils_1.compare)(password, admin.password);
+    if (!isMatch) {
+        throw new errorhandler_middleware_1.CustomError('Wrong credentials provided', 400);
+    }
+    const payload = {
+        _id: admin._id,
+        email: admin.email,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        role: admin.role,
+    };
+    const token = (0, jwt_utils_1.generateToken)(payload);
+    console.log("🚀 ~ login ~ token:", token);
+    res.cookie('access_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production'
+    }).status(200).json({
+        status: "success",
+        success: true,
+        message: "Login successful",
+        token, admin
     });
 }));
