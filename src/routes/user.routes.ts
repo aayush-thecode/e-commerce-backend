@@ -24,6 +24,6 @@ router.get('/:id',Authenticate(OnlyAdmin) ,getUserDataById )
 router.delete('/:id',Authenticate(OnlyAdmin) ,deleteUserById)
 
 //admin login
-router.post('admin/login', Authenticate(OnlyAdmin), adminLogin);
+router.post('admin/login', adminLogin);
 
 export default router; 
