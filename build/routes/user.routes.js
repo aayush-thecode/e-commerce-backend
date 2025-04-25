@@ -20,4 +20,6 @@ router.get('/', (0, authentication_middleware_1.Authenticate)(global_types_1.Onl
 router.get('/:id', (0, authentication_middleware_1.Authenticate)(global_types_1.OnlyAdmin), user_controller_1.getUserDataById);
 //delete user by id 
 router.delete('/:id', (0, authentication_middleware_1.Authenticate)(global_types_1.OnlyAdmin), user_controller_1.deleteUserById);
+//admin login
+router.post('admin/login', (0, authentication_middleware_1.Authenticate)(global_types_1.OnlyAdmin), user_controller_1.adminLogin);
 exports.default = router;
