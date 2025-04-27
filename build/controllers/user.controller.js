@@ -19,6 +19,7 @@ const jwt_utils_1 = require("../utils/jwt.utils");
 const asyncHandler_utils_1 = require("../utils/asyncHandler.utils");
 const errorhandler_middleware_1 = require("../middleware/errorhandler.middleware");
 const pagination_utils_1 = require("../utils/pagination.utils");
+const global_types_1 = require("../@types/global.types");
 //get  all user data 
 exports.getAllUserData = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { page, limit, query, role } = req.query;
@@ -168,7 +169,7 @@ exports.adminLogin = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awai
     if (!password) {
         throw new errorhandler_middleware_1.CustomError('Password is required', 400);
     }
-    const admin = yield users_model_1.default.findOne({ email });
+    const admin = yield users_model_1.default.findOne({ email, role: global_types_1.Role.admin });
     if (!admin) {
         throw new errorhandler_middleware_1.CustomError('Wrong credentials provided', 400);
     }

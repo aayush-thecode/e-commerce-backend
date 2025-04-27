@@ -6,6 +6,7 @@ import { IPayload } from "../@types/jwt.interface";
 import { asyncHandler } from "../utils/asyncHandler.utils";
 import { CustomError } from "../middleware/errorhandler.middleware";
 import { getPaginationData } from "../utils/pagination.utils";
+import { Role } from "../@types/global.types";
 
 
 //get  all user data 
@@ -241,7 +242,7 @@ export const adminLogin = asyncHandler( async (req:Request, res: Response) => {
       throw new CustomError('Password is required', 400);
     }
 
-    const admin = await User.findOne({ email });
+    const admin = await User.findOne({ email, role:Role.admin });
 
     if (!admin) {
       throw new CustomError('Wrong credentials provided', 400)
