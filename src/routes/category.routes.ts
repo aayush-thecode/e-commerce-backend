@@ -8,20 +8,20 @@ const router = express.Router()
 
 // private routes
 //register Category
-router.post('/', Authenticate(OnlyAdmin),create);
+router.post('/category/', Authenticate(OnlyAdmin),create);
 
 //update category 
-router.put('/:id',Authenticate(OnlyAdmin), UpdateProduct);
+router.put('/category/:id',Authenticate(OnlyAdmin), UpdateProduct);
 
 // delete by id 
-router.delete('/:id',Authenticate(OnlyAdmin), deleteCategoryById);
+router.delete('/category/:id',Authenticate(OnlyAdmin), deleteCategoryById);
 
 
 //public routes 
 // get all categories
-router.get('/', getAllCategory);
+router.get('/category/', getAllCategory);
 
 //get category by id 
-router.get('/:id', getCategoryById);
+router.get('/category/:id', getCategoryById);
 
 export default router; 
