@@ -17,7 +17,7 @@ const asyncHandler_utils_1 = require("../utils/asyncHandler.utils");
 const errorhandler_middleware_1 = require("../middleware/errorhandler.middleware");
 const cart_model_1 = require("../models/cart.model");
 const product_model_1 = __importDefault(require("../models/product.model"));
-const pagination_utils_1 = require("../utils/pagination.utils");
+// import { getPaginationData } from "../utils/pagination.utils";
 exports.create = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productId, quantity } = req.body;
     console.log("🚀 ~ create ~ body:", req.body);
@@ -56,32 +56,15 @@ exports.create = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
 }));
 //get cart by user id 
 exports.getCartByUserId = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { limit, page } = req.query;
-    const currentPage = parseInt(page) || 1;
-    const queryLimit = parseInt(limit) || 10;
-    const skip = (currentPage - 1) * queryLimit;
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const cart = yield cart_model_1.Cart.findOne({ user: userId })
-        .populate('user', '-password')
-        .populate({
-        path: 'items.product',
-        select: 'name price description',
-    });
-    if (!cart) {
-        throw new errorhandler_middleware_1.CustomError('Cart not found', 404);
-    }
-    const totalCount = cart.items.length;
-    const paginatedItems = cart.items.slice(skip, skip + queryLimit);
-    const paginatedCart = Object.assign(Object.assign({}, cart.toObject()), { items: paginatedItems });
-    const pagination = (0, pagination_utils_1.getPaginationData)(currentPage, queryLimit, totalCount);
+        .populate("user", "-password")
+        .populate("items.product");
     res.status(200).json({
-        status: 'success',
+        status: "success",
         success: true,
-        message: 'Cart fetched successfully',
-        data: {
-            data: paginatedCart,
-            pagination,
-        },
+        message: "Cart fetched successfully",
+        data: cart,
     });
 }));
 // clear cart 

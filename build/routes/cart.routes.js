@@ -13,7 +13,7 @@ router.post('/add', (0, authentication_middleware_1.Authenticate)(global_types_1
 // clear route 
 router.delete('/clear', (0, authentication_middleware_1.Authenticate)(global_types_1.onlyUser), cart_controller_1.clearCart);
 //get all 
-router.get('/:id', (0, authentication_middleware_1.Authenticate)(global_types_1.onlyUser), cart_controller_1.getCartByUserId);
+router.get('/', (0, authentication_middleware_1.Authenticate)(global_types_1.onlyUser), cart_controller_1.getCartByUserId);
 //remove product from cart 
 router.get('/remove/:productId', (0, authentication_middleware_1.Authenticate)(global_types_1.onlyUser), cart_controller_1.removeItemsFromCart);
 exports.default = router;
