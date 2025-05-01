@@ -41,7 +41,6 @@ export const create = asyncHandler(async (req:Request, res: Response) => {
     if(existingProduct) {
         existingProduct.quantity += Number(quantity)
 
-        cart.items.push(existingProduct);
     }else {
 
         cart.items.push({product:productId, quantity})
