@@ -64,7 +64,7 @@ export const create = asyncHandler(async (req:Request, res: Response) => {
 
 export const getCartByUserId = asyncHandler(
 	async (req: Request, res: Response) => {
-		const userId = req.params.userId;
+		const userId = req.user._id;
 
 		const cart = await Cart.findOne({ user: userId })
 			.populate("user", "-password")
