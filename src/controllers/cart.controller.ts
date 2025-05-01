@@ -13,7 +13,7 @@ export const create = asyncHandler(async (req:Request, res: Response) => {
 
     const userId = req.user._id;
 
-    let cart
+    let cart;
 
     if(!userId) {
         throw new CustomError('userID is required', 400)
@@ -22,8 +22,8 @@ export const create = asyncHandler(async (req:Request, res: Response) => {
     if(!productId) {
         throw new CustomError('productID is required', 400)
     }
-
     cart = await Cart.findOne({user:userId});
+
 
     if(!cart) {
         cart = new Cart({user:userId, items: []})
@@ -63,7 +63,7 @@ export const create = asyncHandler(async (req:Request, res: Response) => {
 
 export const getCartByUserId = asyncHandler(
 	async (req: Request, res: Response) => {
-		const userId = req.user._id;
+		const userId = req.params.userId;
 
 		const cart = await Cart.findOne({ user: userId })
 			.populate("user", "-password")
