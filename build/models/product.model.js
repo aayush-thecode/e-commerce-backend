@@ -18,7 +18,7 @@ const productSchema = new mongoose_1.default.Schema({
     createdBy: {
         type: mongoose_1.default.Types.ObjectId,
         ref: 'user',
-        required: [true, ' author is required ']
+        required: [true, ' Author is required ']
     },
     category: {
         type: mongoose_1.default.Types.ObjectId,

@@ -10,18 +10,32 @@ import { getPaginationData } from "../utils/pagination.utils";
 //create product 
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-
-	const body = req.body;
-	const product = await Product.create(body);
-    
-	const { coverImage, images } = req.files as {
-		[fieldname: string]: Express.Multer.File[];
+	const { name, price, description, category: categoryId } = req.body;
+	const admin = req.user;
+	const files = req.files as {
+		coverImage?: Express.Multer.File[];
+		images?: Express.Multer.File[];
 	};
-	if (!coverImage) {
+	if (!files || !files.coverImage) {
 		throw new CustomError("Cover image is required", 400);
 	}
+	const coverImage = files.coverImage;
+	const images = files.images;
 
-    console.log(coverImage, images);
+	// get category
+	const category = await Category.findById(categoryId);
+
+	if (!category) {
+		throw new CustomError("Category not found", 404);
+	}
+
+	const product = new Product({
+		name,
+		price,
+		description,
+		createdBy: admin._id,
+		category: category._id,
+	});
 
 	product.coverImage = coverImage[0]?.path;
 

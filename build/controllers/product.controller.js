@@ -22,13 +22,26 @@ const pagination_utils_1 = require("../utils/pagination.utils");
 //create product 
 exports.create = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const body = req.body;
-    const product = yield product_model_1.default.create(body);
-    const { coverImage, images } = req.files;
-    if (!coverImage) {
+    const { name, price, description, category: categoryId } = req.body;
+    const admin = req.user;
+    const files = req.files;
+    if (!files || !files.coverImage) {
         throw new errorhandler_middleware_1.CustomError("Cover image is required", 400);
     }
-    console.log(coverImage, images);
+    const coverImage = files.coverImage;
+    const images = files.images;
+    // get category
+    const category = yield category_model_1.default.findById(categoryId);
+    if (!category) {
+        throw new errorhandler_middleware_1.CustomError("Category not found", 404);
+    }
+    const product = new product_model_1.default({
+        name,
+        price,
+        description,
+        createdBy: admin._id,
+        category: category._id,
+    });
     product.coverImage = (_a = coverImage[0]) === null || _a === void 0 ? void 0 : _a.path;
     if (images && images.length > 0) {
         const imagePath = images.map((image, index) => image.path);
