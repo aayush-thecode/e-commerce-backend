@@ -41,7 +41,6 @@ exports.create = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
     console.log("🚀 ~ create ~ existingProduct:", existingProduct);
     if (existingProduct) {
         existingProduct.quantity += Number(quantity);
-        cart.items.push(existingProduct);
     }
     else {
         cart.items.push({ product: productId, quantity });

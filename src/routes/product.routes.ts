@@ -56,10 +56,6 @@ router.delete('/:id', Authenticate(OnlyAdmin), remove)
 //get product by id
 router.get('/:id', getProductById)
 
-//register user
-router.post('/', upload.single('coverImage'), create);
-
-
 //get all products
 router.get('/', getAll);
 

@@ -47,8 +47,6 @@ router.put('/:id', (0, authentication_middleware_1.Authenticate)(global_types_1.
 router.delete('/:id', (0, authentication_middleware_1.Authenticate)(global_types_1.OnlyAdmin), product_controller_1.remove);
 //get product by id
 router.get('/:id', product_controller_1.getProductById);
-//register user
-router.post('/', upload.single('coverImage'), product_controller_1.create);
 //get all products
 router.get('/', product_controller_1.getAll);
 exports.default = router;
