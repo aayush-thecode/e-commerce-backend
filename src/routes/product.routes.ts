@@ -18,7 +18,7 @@ const storage = new CloudinaryStorage({
     // ...
     return {
       folder: 'ecom/products',
-      format: ['jpeg','jpg','webp','svg'],
+      format: ['png', 'jpeg', 'jpg', 'gif', 'bmp', 'webp', 'svg', 'ico', 'tiff', 'heic'],
       public_id: 'some_unique_id',
     };
   },
