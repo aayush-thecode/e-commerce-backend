@@ -43,13 +43,13 @@ exports.create = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
     });
     product.coverImage = {
         path: coverImage[0].path,
-        public_id: coverImage[0].fieldname
+        public_id: coverImage[0].filename
     };
     if (images && images.length > 0) {
         const imagePath = images.map((image, index) => {
             return {
                 path: image.path,
-                public_id: image.fieldname
+                public_id: image.filename
             };
         });
         product.images = Object.assign(Object.assign({}, product.images), imagePath);
@@ -140,7 +140,7 @@ exports.update = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
         yield (0, deleteFIles_utils_1.deleteFiles)([product.coverImage]);
         product.coverImage = {
             path: coverImage[0].path,
-            public_id: coverImage[0].fieldname
+            public_id: coverImage[0].filename
         };
     }
     if (deletedImages && deletedImages.length > 0) {
