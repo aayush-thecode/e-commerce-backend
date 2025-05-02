@@ -13,7 +13,7 @@ router.post('/place', Authenticate(onlyUser), placeOrder);
 router.get('/', Authenticate(OnlyAdmin), getAllOrder);
 
 //get order by userId 
-router.get('/user', getByUserId);
+router.get('/user',Authenticate(OnlyAdmin), getByUserId);
 
 //update order status 
 router.put('/:id/status', Authenticate(OnlyAdmin), updateOrderStatus);

@@ -63,71 +63,67 @@ exports.placeOrder = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awai
 }));
 //get all orders
 exports.getAllOrder = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { page, limit, status, user, minAmount, maxAmount, startDate, endDate, query } = req.query;
-    const currentPage = parseInt(page) || 1;
-    const queryLimit = parseInt(limit) || 10;
-    const skip = (currentPage - 1) * queryLimit;
+    const { limit, page, status, query, minTotal, maxTotal, toDate, fromDate } = req.query;
     let filter = {};
+    const currentPage = parseInt(page) || 1;
+    const perPage = parseInt(limit) || 10;
+    const skip = (currentPage - 1) * perPage;
+    if (query) {
+        filter.orderId = { $regex: query, $options: "i" };
+    }
     if (status) {
         filter.status = status;
     }
-    if (user) {
-        filter.user = user;
+    if (minTotal || maxTotal) {
+        if (minTotal && maxTotal) {
+            filter.totalAmount = {
+                $lte: parseFloat(maxTotal),
+                $gte: parseFloat(minTotal),
+            };
+        }
+        if (minTotal) {
+            filter.totalAmount = { $gte: parseFloat(minTotal) };
+        }
+        if (maxTotal) {
+            filter.totalAmount = { $lte: parseFloat(maxTotal) };
+        }
     }
-    if (query) {
-        filter.orderId = [
-            {
-                orderId: { regex: query, $options: 'i' }
-            }
-        ];
+    // date filter
+    if (toDate || fromDate) {
+        if (toDate && fromDate) {
+            filter.createdAt = {
+                $lte: new Date(toDate),
+                $gte: new Date(fromDate),
+            };
+        }
+        if (fromDate) {
+            filter.createdAt = { $gte: new Date(fromDate) };
+        }
+        if (toDate) {
+            filter.createdAt = { $lte: new Date(toDate) };
+        }
     }
-    if (minAmount && maxAmount) {
-        filter.totalAmount = {
-            $gte: parseFloat(minAmount),
-            $lte: parseFloat(maxAmount)
-        };
-    }
-    else if (minAmount) {
-        filter.totalAmount = { $gte: parseFloat(minAmount) };
-    }
-    else if (maxAmount) {
-        filter.totalAmount = { $lte: parseFloat(maxAmount) };
-    }
-    // Filter by date range
-    if (startDate && endDate) {
-        filter.createdAt = {
-            $gte: new Date(startDate),
-            $lte: new Date(endDate)
-        };
-    }
-    else if (startDate) {
-        filter.createdAt = { $gte: new Date(startDate) };
-    }
-    else if (endDate) {
-        filter.createdAt = { $lte: new Date(endDate) };
-    }
-    const orders = yield order_model_1.default.find(filter)
+    const allOrders = yield order_model_1.default.find(filter)
         .skip(skip)
-        .limit(queryLimit)
-        .sort({ createdAt: -1 })
-        .populate('items.product')
-        .populate('user', '-password');
+        .limit(perPage)
+        .populate("items.product")
+        .populate("user", "-password")
+        .sort({ createdAt: -1 });
     const totalCount = yield order_model_1.default.countDocuments(filter);
-    const pagination = (0, pagination_utils_1.getPaginationData)(currentPage, queryLimit, totalCount);
-    res.status(200).json({
+    res.status(201).json({
         success: true,
-        status: 'success',
+        status: "success",
+        message: "Order fetched successfully",
         data: {
-            data: orders,
-            pagination,
+            data: allOrders,
+            pagination: (0, pagination_utils_1.getPaginationData)(currentPage, perPage, totalCount),
         },
-        message: 'Orders fetched successfully!'
     });
 }));
 //get orders by user id
 exports.getByUserId = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.user._id;
-    const orders = order_model_1.default.findOne({ user: userId })
+    const orders = yield order_model_1.default.findOne({ user: userId })
         .populate("items.product")
         .populate("user", "-password");
     res.status(201).json({
@@ -147,7 +143,7 @@ exports.updateOrderStatus = (0, asyncHandler_utils_1.asyncHandler)((req, res) =>
     if (!orderId) {
         throw new errorhandler_middleware_1.CustomError('orderId is required', 400);
     }
-    const updatedOrder = order_model_1.default.findByIdAndUpdate(orderId, { status }, { new: true });
+    const updatedOrder = yield order_model_1.default.findByIdAndUpdate(orderId, { status }, { new: true });
     if (!updatedOrder) {
         throw new errorhandler_middleware_1.CustomError('order not found', 404);
     }
@@ -164,7 +160,7 @@ exports.deleteOrder = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awa
     if (!orderId) {
         throw new errorhandler_middleware_1.CustomError('orderId is required', 400);
     }
-    const deletedOrder = order_model_1.default.findByIdAndDelete(orderId);
+    const deletedOrder = yield order_model_1.default.findByIdAndDelete(orderId);
     if (!deletedOrder) {
         throw new errorhandler_middleware_1.CustomError('order not found', 404);
     }

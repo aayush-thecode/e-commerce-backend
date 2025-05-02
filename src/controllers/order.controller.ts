@@ -71,77 +71,76 @@ export const placeOrder = asyncHandler(async(req: Request, res: Response) => {
 
 //get all orders
 
-export const getAllOrder = asyncHandler(async(req: Request, res: Response) => {
+export const getAllOrder = asyncHandler(async (req: Request, res: Response) => {
+	const { limit, page, status, query, minTotal, maxTotal, toDate, fromDate } =
+		req.query;
+	let filter: Record<string, any> = {};
 
-    const {page, limit, status, user, minAmount, maxAmount, startDate, endDate, query} = req.query;
-    
-    const currentPage = parseInt(page as string) || 1;
-    const queryLimit = parseInt(limit as string) || 10;
-    const skip = (currentPage - 1) * queryLimit;
-    
-    let filter: Record<string, any> = {};
-    
-    if(status) {
-        filter.status = status;
-    }
-    
-    if(user) {
-        filter.user = user;
-    }
-    
-    
-    if(query) {
-        filter.orderId = [
-            {
-                orderId: { regex: query, $options: 'i'}
-            }
-        ]
-    }
+	const currentPage = parseInt(page as string) || 1;
+	const perPage = parseInt(limit as string) || 10;
+	const skip = (currentPage - 1) * perPage;
 
-    if(minAmount && maxAmount) {
-        filter.totalAmount = {
-            $gte: parseFloat(minAmount as string),
-            $lte: parseFloat(maxAmount as string)
-        };
+	if (query) {
+		filter.orderId = { $regex: query, $options: "i" };
+	}
 
-    } else if(minAmount) {
-        filter.totalAmount = { $gte: parseFloat(minAmount as string) };
-    } else if(maxAmount) {
-        filter.totalAmount = { $lte: parseFloat(maxAmount as string) };
-    }
-    
-    // Filter by date range
-    if(startDate && endDate) {
-        filter.createdAt = {
-            $gte: new Date(startDate as string),
-            $lte: new Date(endDate as string)
-        };
-    } else if(startDate) {
-        filter.createdAt = { $gte: new Date(startDate as string) };
-    } else if(endDate) {
-        filter.createdAt = { $lte: new Date(endDate as string) };
-    }
-    
-    const orders = await Order.find(filter)
-        .skip(skip)
-        .limit(queryLimit)
-        .sort({ createdAt: -1 }) 
-        .populate('items.product')
-        .populate('user', '-password');
-    
-    const totalCount = await Order.countDocuments(filter);
-    
-    const pagination = getPaginationData(currentPage, queryLimit, totalCount);
-    
-    res.status(200).json({
-        success: true,
-        status: 'success',
-        data: {
-            data: orders,
-            pagination,
-        },
-        message: 'Orders fetched successfully!'
-    });
+	if (status) {
+		filter.status = status;
+	}
+
+	if (minTotal || maxTotal) {
+		if (minTotal && maxTotal) {
+			filter.totalAmount = {
+				$lte: parseFloat(maxTotal as string),
+				$gte: parseFloat(minTotal as string),
+			};
+		}
+
+		if (minTotal) {
+			filter.totalAmount = { $gte: parseFloat(minTotal as string) };
+		}
+
+		if (maxTotal) {
+			filter.totalAmount = { $lte: parseFloat(maxTotal as string) };
+		}
+	}
+
+	// date filter
+	if (toDate || fromDate) {
+		if (toDate && fromDate) {
+			filter.createdAt = {
+				$lte: new Date(toDate as string),
+				$gte: new Date(fromDate as string),
+			};
+		}
+
+		if (fromDate) {
+			filter.createdAt = { $gte: new Date(fromDate as string) };
+		}
+
+		if (toDate) {
+			filter.createdAt = { $lte: new Date(toDate as string) };
+		}
+	}
+
+	const allOrders = await Order.find(filter)
+		.skip(skip)
+		.limit(perPage)
+		.populate("items.product")
+		.populate("user", "-password")
+		.sort({ createdAt: -1 });
+
+	const totalCount = await Order.countDocuments(filter);
+
+	res.status(201).json({
+		success: true,
+		status: "success",
+		message: "Order fetched successfully",
+		data: {
+			data: allOrders,
+			pagination: getPaginationData(currentPage, perPage, totalCount),
+		},
+	});
 });
 
 //get orders by user id
@@ -150,7 +149,7 @@ export const getByUserId = asyncHandler(async(req: Request, res: Response) => {
     
     const userId = req.user._id
 
-    const orders = Order.findOne({user:userId})
+    const orders = await Order.findOne({user:userId})
     .populate("items.product")
     .populate("user", "-password")
 
@@ -179,7 +178,7 @@ export const updateOrderStatus = asyncHandler(async(req:Request, res:Response) =
         throw new CustomError('orderId is required', 400)
     }
 
-    const updatedOrder = Order.findByIdAndUpdate(orderId,
+    const updatedOrder = await Order.findByIdAndUpdate(orderId,
          {status}, 
          {new: true})
 
@@ -206,7 +205,7 @@ export const deleteOrder = asyncHandler(async(req:Request, res:Response) => {
         throw new CustomError('orderId is required', 400)
     }
 
-    const deletedOrder = Order.findByIdAndDelete(orderId)
+    const deletedOrder = await Order.findByIdAndDelete(orderId)
 
     if(!deletedOrder) {
         throw new CustomError('order not found', 404)

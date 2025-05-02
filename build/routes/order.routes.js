@@ -13,7 +13,7 @@ router.post('/place', (0, authentication_middleware_1.Authenticate)(global_types
 // get all order
 router.get('/', (0, authentication_middleware_1.Authenticate)(global_types_1.OnlyAdmin), order_controller_1.getAllOrder);
 //get order by userId 
-router.get('/user', order_controller_1.getByUserId);
+router.get('/user', (0, authentication_middleware_1.Authenticate)(global_types_1.OnlyAdmin), order_controller_1.getByUserId);
 //update order status 
 router.put('/:id/status', (0, authentication_middleware_1.Authenticate)(global_types_1.OnlyAdmin), order_controller_1.updateOrderStatus);
 //delete an order
