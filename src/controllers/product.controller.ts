@@ -204,8 +204,6 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     await deleteFiles(deletedImages as string[])
     product.images = product.images.filter(
         (image) => !deletedImages.includes(image.public_id))
-
-
     }
 
 
@@ -241,6 +239,10 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
         throw new CustomError('Product not found', 404);
     }
 
+    if(product.coverImage) {
+        // @ts-expect-error 
+        await deleteFiles([product.coverImage?.public_id] as string[])
+    }
     // Delete associated images if they exist
 
     const imagesToDelete: string[] = [];

@@ -161,10 +161,15 @@ exports.update = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
 }));
 //delete productby Id 
 exports.remove = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const id = req.params.id;
     const product = yield product_model_1.default.findByIdAndDelete(id);
     if (!product) {
         throw new errorhandler_middleware_1.CustomError('Product not found', 404);
+    }
+    if (product.coverImage) {
+        // @ts-expect-error 
+        yield (0, deleteFIles_utils_1.deleteFiles)([(_a = product.coverImage) === null || _a === void 0 ? void 0 : _a.public_id]);
     }
     // Delete associated images if they exist
     const imagesToDelete = [];
