@@ -37,13 +37,22 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 		category: category._id,
 	});
 
-	product.coverImage = coverImage[0]?.path;
+	product.coverImage = {
+        path:coverImage[0].path,
+        public_id:coverImage[0].fieldname
+    };
+
 
 	if (images && images.length > 0) {
-		const imagePath: string[] = images.map(
-			(image: any, index: number) => image.path
+		const imagePath = images.map(
+			(image: any, index: number) => {
+                return {
+                    path:image.path,
+                    public_id:image.fieldname
+                }
+            }
 		);
-		product.images = imagePath;
+		product.images = {...product.images,...imagePath};
 	}
 
 	await product.save();
@@ -182,7 +191,10 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
     if(coverImage) {
 
         await deleteFiles([product.coverImage as string])
-        product.coverImage = coverImage[0]?.path
+        product.coverImage = {
+            path:coverImage[0].path,
+            public_id:coverImage[0].fieldname
+        }
 
     }
 
@@ -191,7 +203,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 
     await deleteFiles(deletedImages as string[])
     product.images = product.images.filter(
-        (image) => !deletedImages.includes(image))
+        (image) => !deletedImages.includes(image.public_id))
 
 
     }

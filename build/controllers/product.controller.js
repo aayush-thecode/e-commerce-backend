@@ -21,7 +21,6 @@ const category_model_1 = __importDefault(require("../models/category.model"));
 const pagination_utils_1 = require("../utils/pagination.utils");
 //create product 
 exports.create = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     const { name, price, description, category: categoryId } = req.body;
     const admin = req.user;
     const files = req.files;
@@ -42,10 +41,18 @@ exports.create = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
         createdBy: admin._id,
         category: category._id,
     });
-    product.coverImage = (_a = coverImage[0]) === null || _a === void 0 ? void 0 : _a.path;
+    product.coverImage = {
+        path: coverImage[0].path,
+        public_id: coverImage[0].fieldname
+    };
     if (images && images.length > 0) {
-        const imagePath = images.map((image, index) => image.path);
-        product.images = imagePath;
+        const imagePath = images.map((image, index) => {
+            return {
+                path: image.path,
+                public_id: image.fieldname
+            };
+        });
+        product.images = Object.assign(Object.assign({}, product.images), imagePath);
     }
     yield product.save();
     res.status(201).json({
@@ -115,7 +122,6 @@ exports.getProductById = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __
 }));
 //update product 
 exports.update = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     const { deletedImages, name, price, description, categoryId } = req.body;
     const id = req.params.id;
     const { coverImage, images } = req.files;
@@ -132,11 +138,14 @@ exports.update = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
     }
     if (coverImage) {
         yield (0, deleteFIles_utils_1.deleteFiles)([product.coverImage]);
-        product.coverImage = (_a = coverImage[0]) === null || _a === void 0 ? void 0 : _a.path;
+        product.coverImage = {
+            path: coverImage[0].path,
+            public_id: coverImage[0].fieldname
+        };
     }
     if (deletedImages && deletedImages.length > 0) {
         yield (0, deleteFIles_utils_1.deleteFiles)(deletedImages);
-        product.images = product.images.filter((image) => !deletedImages.includes(image));
+        product.images = product.images.filter((image) => !deletedImages.includes(image.public_id));
     }
     if (images && images.length > 0) {
         const imagePath = images.map((image, index) => image.path);

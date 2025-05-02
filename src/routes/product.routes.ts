@@ -3,22 +3,26 @@ import { create, getAll, getProductById, remove, update } from '../controllers/p
 import multer from "multer";
 import { Authenticate } from '../middleware/authentication.middleware';
 import { OnlyAdmin } from '../@types/global.types';
+import { cloudinary } from '../config/cloudinary.config';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 
 const router = express.Router()
 
 //storage 
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './uploads')
-      console.log(file)
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
-      cb(null, uniqueSuffix + '-' + file.originalname)
-    }
-  })
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    // async code using `req` and `file`
+    // ...
+    return {
+      folder: 'ecom/products',
+      format: ['jpeg','jpg','webp','svg'],
+      public_id: 'some_unique_id',
+    };
+  },
+});
 
   const upload = multer({storage: storage})
 
