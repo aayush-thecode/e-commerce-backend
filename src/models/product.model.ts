@@ -36,7 +36,6 @@ const productSchema = new mongoose.Schema ({
                 type:String,
                 required:true,
             },
-            // required:true,
     },
     images: [
         {
@@ -48,7 +47,6 @@ const productSchema = new mongoose.Schema ({
             type:String,
             required:true,
         },
-        // required:true,
     }],
     reviews: [
         {

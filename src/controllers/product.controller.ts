@@ -16,6 +16,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 		coverImage?: Express.Multer.File[];
 		images?: Express.Multer.File[];
 	};
+
 	if (!files || !files.coverImage) {
 		throw new CustomError("Cover image is required", 400);
 	}
@@ -52,7 +53,7 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
                 }
             }
 		);
-		product.images = {...product.images,...imagePath};
+		product.images = [...product.images,...imagePath];
 	}
 
 	await product.save();

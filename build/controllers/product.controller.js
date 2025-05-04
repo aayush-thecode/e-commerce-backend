@@ -52,7 +52,7 @@ exports.create = (0, asyncHandler_utils_1.asyncHandler)((req, res) => __awaiter(
                 public_id: image.filename
             };
         });
-        product.images = Object.assign(Object.assign({}, product.images), imagePath);
+        product.images = [...product.images, ...imagePath];
     }
     yield product.save();
     res.status(201).json({
