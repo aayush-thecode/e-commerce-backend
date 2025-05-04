@@ -28,7 +28,7 @@ const storage = new multer_storage_cloudinary_1.CloudinaryStorage({
         // ...
         return {
             folder: 'ecom/products',
-            format: ['jpeg', 'jpg', 'webp', 'svg'],
+            allowed_formats: ['jpeg', 'jpg', 'png', 'webp'],
             public_id: 'some_unique_id',
         };
     }),
